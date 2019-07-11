@@ -1,0 +1,2 @@
+<script src="{{ asset('custom-libraries/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+<link href="{{ asset('custom-libraries/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet"></link>
