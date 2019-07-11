@@ -21,7 +21,7 @@
     <input type="number" name="order[items][{{$row_num}}][item_rate]" value="{{$item->item_rate}}" step=".01" readonly class="form-control editable_input item_rate_input"/>
   </td>
   <td>
-    <input type="number" name="order[items][{{$row_num}}][qty_on_hand]" value="{{$item->qty_on_hand}}" readonly class="form-control qty_on_hand_input"/>
+    <input type="number" name="order[items][{{$row_num}}][qty_on_hand]" value="{{$item->item_qty_on_hand}}" readonly class="form-control qty_on_hand_input"/>
   </td>
   <td>
     <input type="number" name="order[items][{{$row_num}}][item_qty]" value="{{$item->item_qty}}" readonly class="form-control editable_input item_qty_input"/>

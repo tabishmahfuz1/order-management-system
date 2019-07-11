@@ -23,7 +23,7 @@ class SalesOrderController extends Controller
     }
 
     public function viewSalesOrders(Request $req) {
-    	$orders = SalesOrder::orderBy('id', 'DESC')->get();
+    	$orders = SalesOrder::orderBy('id', 'DESC')->join('customers', 'customers.id', '=', 'sales_orders.customer_id')->select('sales_orders.*', 'customers.name As customer')->get();
     	return view('order.view_sales_orders', compact('orders'));
     }
 
@@ -45,7 +45,8 @@ class SalesOrderController extends Controller
 
     	$order->customer_id 	= $req_order['customer_id'];
         $order->order_date      = date('Y-m-d', strtotime($req_order['order_date']));
-    	$order->sales_order_no 	= 'TEMP';
+        $order->sales_order_no  = 'TEMP';
+    	$order->ref_no 	        = $req_order['ref_no'];
     	$order->sub_total 		= $req_order['sub_total'];
     	$order->discount_percent 	= ($req_order['discount_percent'] ?? 0);
     	$order->discount_amount 	= ($req_order['discount_amount'] ?? 0);

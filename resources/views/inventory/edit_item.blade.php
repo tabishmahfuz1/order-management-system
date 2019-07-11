@@ -49,8 +49,8 @@
           </div>
           
           <div class="form-group">
-            <label class="control-label">Item Name</label>
-            <input class="form-control form-control-sm" name="item" placeholder="Item Name"></input>
+            <label class="control-label">Quantity on Hand</label>
+            <input type="number" class="form-control form-control-sm" name="qty_on_hand" placeholder="0" value="{{ $item->qty_on_hand }}"></input>
           </div>
         </div>
         <div class="col-md-4">
