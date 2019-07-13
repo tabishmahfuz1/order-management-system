@@ -65,6 +65,9 @@ class SalesOrderController extends Controller
     }
 
     public function addSoItem(Request $req) {
-        dd($req->all());
+        // dd($req->all());
+        $order = SalesOrder::find($req->so_id);
+        $item  = $order->addItems([$req->toArray()], true);
+        return response()->json(array('row' => view('order.so_item_row', compact('item'))->render()));
     }
 }

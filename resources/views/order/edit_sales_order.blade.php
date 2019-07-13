@@ -88,7 +88,7 @@
               <tr id="add_item_tr">
                 <td>
                   <div class="form-group">
-                    <select class="select2 form-control form-control-sm" name="item_id" id="new_item">
+                    <select class="select2 form-control form-control-sm item_select" name="item_id" id="new_item">
                       <option value="">Select Item</option>
                       @if(!empty($items))
                         @foreach($items as $item)
@@ -101,22 +101,22 @@
                 </td>
                 <td>
                   <div class="form-group">
-                    <input type="number" name="new_item_cost" step=".01" id="new_item_cost" readonly class="form-control"/>
+                    <input type="number" name="new_item_cost" step=".01" id="new_item_cost" readonly class="form-control item_cost_input"/>
                     <span class="form-text"></span>
                   </div>
                 </td>
                 <td>
                   <div class="form-group">
-                    <input type="number" name="new_item_price" step=".01" id="new_item_price" readonly class="form-control calculation_input"/>
+                    <input type="number" name="new_item_price" step=".01" id="new_item_price" readonly class="form-control calculation_input item_price_input"/>
                     <span class="form-text"></span>
                   </div>
                 </td>
-                <td><input type="number" name="new_item_disc_per" step=".01" id="new_item_discount" class="form-control calculation_input"/></td>
-                <td><input type="number" name="new_item_disc_amt" step=".01" id="new_item_discount_amount" readonly class="form-control calculation_input"/></td>
-                <td><input type="number" name="new_item_rate" step=".01" id="new_item_rate" class="form-control calculation_input"/></td>
-                <td><input type="number" name="new_qty_on_hand" id="new_item_qty_on_hand" readonly class="form-control"/></td>
-                <td><input type="number" name="new_item_qty" id="new_item_quantity" class="form-control calculation_input"/></td>
-                <td><input type="number" name="new_item_total" step=".01" id="new_item_total" readonly class="form-control"/></td>
+                <td><input type="number" name="new_item_disc_per" step=".01" id="new_item_discount" class="form-control calculation_input item_disc_per_input"/></td>
+                <td><input type="number" name="new_item_disc_amt" step=".01" id="new_item_discount_amount" readonly class="form-control calculation_input item_disc_amt_input"/></td>
+                <td><input type="number" name="new_item_rate" step=".01" id="new_item_rate" class="form-control calculation_input item_rate_input"/></td>
+                <td><input type="number" name="new_qty_on_hand" id="new_item_qty_on_hand" readonly class="form-control item_qty_on_hand_input"/></td>
+                <td><input type="number" name="new_item_qty" id="new_item_quantity" class="form-control calculation_input item_qty_input"/></td>
+                <td><input type="number" name="new_item_total" step=".01" id="new_item_total" readonly class="form-control item_total_input"/></td>
                 <td><button type="button" class="btn btn-sm btn-primary" onclick="AddItem()">Add</button></td>
               </tr>
           </tbody>
@@ -188,20 +188,22 @@
       format: 'yyyy-mm-dd'
     });
 
-    $('#new_item').change(async function(){
-      let item_id     = $(this).val();
+    $(document).on('change', '.item_select', async function(){
+      let item_id     = $(this).val(),
+          $thisTr     = $(this).closest('tr');
+      // console.log(this, item_id)
       if(!item_id)
         return false;
       let item        = await getItemById(item_id);
       if(!item)
         return false;
-      $('#new_item_cost').val(item.item_cost);
-      $('#new_item_price').val(item.item_price);
-      $('#new_item_rate').val(item.item_price);
-      $('#new_item_qty_on_hand').val(item.qty_on_hand);
-      $('#new_item_quantity').val(0);
-      $('#new_item_discount').val(0);
-      $('#new_item_discount_amount').val(0);
+      $thisTr.find('.item_cost_input').val(item.item_cost);
+      $thisTr.find('.item_price_input').val(item.item_price);
+      $thisTr.find('.item_rate_input').val(item.item_price);
+      $thisTr.find('.item_qty_on_hand_input').val(item.qty_on_hand);
+      $thisTr.find('.item_qty_input').val(0);
+      $thisTr.find('.item_disc_per_input').val(0);
+      $thisTr.find('.item_disc_amt_input').val(0);
       
     });
 
@@ -301,24 +303,29 @@
   function EditItem(thisBtn) {
     let $thisTr = $(thisBtn).closest('tr');
     $thisTr.find('.editable_input').prop('readonly', false);
+    let so_item_id = $thisTr.data('so-item-id');
     let $item_select = $('#new_item').clone()
-                                      .attr('id', 'temp_item_id');
+                                      .attr('id', 'item_id_' + so_item_id)
+                                      .attr('class', 'item_select')
+                                      .css('width', '100%');
     $thisTr.find('.item_name_input').replaceWith($item_select);
     $item_select.val($thisTr.find('.item_id_input').val())
-    $('#temp_item_id').select2();
-    $(thisBtn).replaceWith(`<button onclick="SaveItem(this)">Save</button>`);
+    $('#item_id_' + so_item_id).select2();
+    $(thisBtn).replaceWith(`<button onclick="SaveItem(this)" type="button" class="btn btn-success btn-sm" >Save</button>`);
+    $('#item_id_' + so_item_id).select2();
   }
 
   async function SaveItem(thisBtn) {
     let $thisTr = $(thisBtn).closest('tr'),
-        item_id = $thisTr.find('#temp_item_id').val(),
-        so_item_id= $thisTr.find('so_item_id_input').val(),
+        so_item_id = $thisTr.data('so-item-id'),
+        item_id = $thisTr.find('#item_id_' + so_item_id).val(),
+        // so_item_id= $thisTr.find('so_item_id_input').val(),
         item_cost = $thisTr.find('.item_cost_input').val(),
         item_price= $thisTr.find('.item_price_input').val(),
         item_disc_per= $thisTr.find('.item_disc_per_input').val()
         item_disc_amt= $thisTr.find('.item_disc_amt_input').val(),
         item_rate= $thisTr.find('.item_rate_input').val(),
-        qty_on_hand= $thisTr.find('.qty_on_hand_input').val(),
+        item_qty_on_hand= $thisTr.find('.qty_on_hand_input').val(),
         item_qty= $thisTr.find('.item_qty_input').val(),
         item_total= $thisTr.find('.item_total_input').val();
 
@@ -350,11 +357,12 @@
       item_disc_per,
       item_disc_amt,
       item_rate,
-      qty_on_hand,
+      item_qty_on_hand,
       item_qty,
       item_total
     };
     item['_token'] = '{{ Session::token() }}';
+    item['so_id']  = '{{ $order->id }}';
 
     try{
       let response = await $.post('{{ route("add_so_item") }}', item);  
@@ -370,6 +378,29 @@
   }
 
   function calculateNewItemTotal(input) {
+      console.log(input)
+      let $thisTr = $(input.target).closest('tr');
+      let $new_item_price       = $thisTr.find('.item_price_input'),
+          $new_item_quantity    = $thisTr.find('.item_qty_input'),
+          $new_item_discount    = $thisTr.find('.item_disc_per_input');
+
+      let new_item_price = parseFloat($new_item_price.val() || 0), 
+          new_item_quantity = parseFloat($new_item_quantity.val() || 0),
+          new_item_discount = parseFloat($new_item_discount.val() || 0);
+
+      let discount_amt    = new_item_price * new_item_discount * 0.01, 
+          new_item_rate   = (new_item_price - discount_amt);
+      let item_total =  new_item_rate * new_item_quantity;
+
+      $thisTr.find('.item_rate_input').val(new_item_rate);
+      $thisTr.find('.item_total_input').val(item_total);
+      $thisTr.find('.item_disc_amt_input').val(discount_amt);
+
+  }
+
+  /*function calculateItemTotal(input) {
+      console.log(input)
+      let $thisTr = $(input.target).closest('tr');
       let $new_item_price       = $('#new_item_price'),
           $new_item_quantity    = $('#new_item_quantity'),
           $new_item_discount    = $('#new_item_discount');
@@ -386,7 +417,7 @@
       $('#new_item_total').val(item_total);
       $('#new_item_discount_amount').val(discount_amt);
 
-  }
+  }*/
 
   function calculateTotals(){
     let $sub_total = $('#sub_total'), sub_total = 0;
