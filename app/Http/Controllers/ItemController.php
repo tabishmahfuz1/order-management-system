@@ -22,10 +22,11 @@ class ItemController extends Controller
     	else
     		$item = new Item();
 
-    	$item->item_name = $req->item_name;
-    	$item->item_cost = $req->item_cost;
-    	$item->item_price = $req->item_price;
-    	$item->status = $req->status;
+    	$item->item_name   = $req->item_name;
+    	$item->item_cost   = $req->item_cost;
+        $item->item_price  = $req->item_price;
+    	$item->qty_on_hand = $req->qty_on_hand;
+    	$item->status      = $req->status;
     	$item->save();
 
     	return redirect()->route('edit_item', $item->id)->with(['success' => 'Information Saved']);

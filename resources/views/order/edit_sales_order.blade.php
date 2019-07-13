@@ -29,13 +29,13 @@
         <div class="col">
           <div class="form-group">
             <label class="control-label">Sales Order Number</label>
-            <input type="text" name="order[sales_order_no]" class="form-control form-control-sm" value="{{ $order->sales_order_no }}" disabled />
+            <input type="text" name="order[sales_order_no]" class="form-control form-control-sm" value="{{ $order->sales_order_no }}" readonly />
           </div>
         </div>
         <div class="col">
           <div class="form-group">
             <label class="control-label">Order Date</label>
-            <input type="text" name="order[order_date]" class="form-control form-control-sm" value="{{ $order->order_date }}" id="order_date" disabled />
+            <input type="text" name="order[order_date]" class="form-control form-control-sm" value="{{ $order->order_date }}" id="order_date" readonly />
           </div>
         </div>
         <div class="col">

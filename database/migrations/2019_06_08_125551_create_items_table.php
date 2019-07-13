@@ -19,7 +19,7 @@ class CreateItemsTable extends Migration
             $table->decimal('item_price', 10, 2);
             $table->decimal('item_cost', 10, 2);
             $table->boolean('status');
-            $table->bigInteger('qty_on_hand');
+            $table->bigInteger('qty_on_hand')->default(0);
             $table->timestamps();
         });
     }

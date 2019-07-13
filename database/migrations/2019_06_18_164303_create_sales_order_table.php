@@ -17,6 +17,7 @@ class CreateSalesOrderTable extends Migration
             $table->bigIncrements('id');
             $table->integer('customer_id');
             $table->string('sales_order_no');
+            $table->date('order_date');
             $table->string('ref_no')->default('');
             $table->decimal('sub_total', 10, 2);
             $table->decimal('discount_percent', 5, 2)->default(0);
