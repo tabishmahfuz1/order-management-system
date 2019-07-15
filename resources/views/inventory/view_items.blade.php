@@ -16,8 +16,9 @@
           <tr>
             <th>Item Name</th>
             <th>Item Type</th>
-            <th>Cost</th>
-            <th>Price</th>
+            <th>Purchasing Cost</th>
+            <th>Selling Price</th>
+            <th>Stock Balance</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -26,8 +27,9 @@
           <tr>
             <th>Item Name</th>
             <th>Item Type</th>
-            <th>Cost</th>
-            <th>Price</th>
+            <th>Purchasing Cost</th>
+            <th>Selling Price</th>
+            <th>Stock Balance</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -40,6 +42,7 @@
                 <td></td>
                 <td class="text-right">{{ $item->item_cost }}</td>
                 <td class="text-right">{{ $item->item_price }}</td>
+              <td class="text-right">{{ $item->qty_on_hand }}</td>
                 <td class="text-center">{{ $item->status == 1 ? "Active" : "Disabled" }}</td>
                 <td class="text-center"><a href="{{ route('edit_item', [$item->id]) }}"><i class="fa fa-edit"></i></a></td>
               </tr>

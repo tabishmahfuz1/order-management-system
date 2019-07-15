@@ -24,6 +24,7 @@ class CreateSalesOrderItemsTable extends Migration
             $table->integer('item_qty');
             $table->bigInteger('item_qty_on_hand');
             $table->decimal('item_total', 10, 2);
+            $table->integer('balance_qty')->default(0);
             $table->integer('sales_order_id');
             $table->timestamps();
         });

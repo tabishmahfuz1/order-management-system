@@ -35,7 +35,7 @@
         <div class="col">
           <div class="form-group">
             <label class="control-label">Order Date</label>
-            <input type="text" name="order[order_date]" class="form-control form-control-sm" value="{{ $order->order_date }}" id="order_date" readonly />
+            <input type="text" name="order[order_date]" class="form-control form-control-sm datepicker" value="{{ $order->order_date }}" id="order_date" />
           </div>
         </div>
         <div class="col">
@@ -53,6 +53,18 @@
           <div class="form-group">
             <label class="control-label">Reference Number</label>
             <input type="text" name="order[ref_no]" value="{{ $order->ref_no }}" class="form-control form-control-sm" />
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label class="control-label">Order Status</label>
+            <select type="text" name="order[status]" class="form-control form-control-sm" id="order_status">
+              <option value="NEW_ORDER">New Order</option>
+              <option value="IN_PROCESS">In Process</option>
+              <option value="DISPATCHED">Dispatched</option>
+              <option value="DELIVERED">Delivered</option>
+              <option value="CLOSED">Closed</option>
+            </select>
           </div>
         </div>
         <!-- <div class="col-md-4">
@@ -73,11 +85,12 @@
           <thead>
             <tr>
               <th>Item Name</th>
-              <th>Item Cost</th>
-              <th>Item Price</th>
-              <th>Discount</th>
+              <th>Purhcasing Cost</th>
+              <th>Selling Price</th>
+              <th>Discount (%)</th>
               <th>Discount Amount</th>
               <th>Item Rate</th>
+              <th>Tax(%)</th>
               <th>Qty. on Hand</th>
               <th>Quantity</th>
               <th>Item Total</th>
@@ -114,6 +127,7 @@
                 <td><input type="number" name="new_item_disc_per" step=".01" id="new_item_discount" class="form-control calculation_input item_disc_per_input"/></td>
                 <td><input type="number" name="new_item_disc_amt" step=".01" id="new_item_discount_amount" readonly class="form-control calculation_input item_disc_amt_input"/></td>
                 <td><input type="number" name="new_item_rate" step=".01" id="new_item_rate" class="form-control calculation_input item_rate_input"/></td>
+                <td><input type="number" name="new_item_tax_rate" step=".01" id="new_item_tax_rate" class="form-control calculation_input new_item_tax_rate_input"/></td>
                 <td><input type="number" name="new_qty_on_hand" id="new_item_qty_on_hand" readonly class="form-control item_qty_on_hand_input"/></td>
                 <td><input type="number" name="new_item_qty" id="new_item_quantity" class="form-control calculation_input item_qty_input"/></td>
                 <td><input type="number" name="new_item_total" step=".01" id="new_item_total" readonly class="form-control item_total_input"/></td>
@@ -125,7 +139,7 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="7" rowspan="5">
+              <td colspan="8" rowspan="6">
                 <textarea name="order[memo]" class="form-control" placeholder="Memo">{{ $order->memo }}</textarea> 
               </td>
               <th>Sub Total</th>
@@ -320,6 +334,7 @@
         so_item_id = $thisTr.data('so-item-id'),
         item_id = $thisTr.find('#item_id_' + so_item_id).val(),
         // so_item_id= $thisTr.find('so_item_id_input').val(),
+        item_name = $thisTr.find('#item_id_' + so_item_id + " option:selected").text(),
         item_cost = $thisTr.find('.item_cost_input').val(),
         item_price= $thisTr.find('.item_price_input').val(),
         item_disc_per= $thisTr.find('.item_disc_per_input').val()
@@ -351,6 +366,7 @@
 
     let item = {
       item_id,
+      item_name,
       so_item_id,
       item_cost,
       item_price,
@@ -366,14 +382,16 @@
 
     try{
       let response = await $.post('{{ route("add_so_item") }}', item);  
+      if(response.success){
+        $thisTr.replaceWith(response.row);
+        calculateTotals();
+      }
+      else{
+        console.log(response);
+      }
     } catch(e) {
       console.error(e);
       return false;
-    }
-    if(response.success)
-        $thisTr.replaceWith(response.row);
-    else{
-      console.log(response);
     }
   }
 
@@ -422,7 +440,7 @@
   function calculateTotals(){
     let $sub_total = $('#sub_total'), sub_total = 0;
     
-    $('.item_total_input').each(function(){
+    $('.item_total_input:not(#new_item_total)').each(function(){
       sub_total += parseFloat($(this).val());
     });
 

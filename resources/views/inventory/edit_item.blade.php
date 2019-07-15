@@ -26,10 +26,12 @@
             <label class="control-label">Item Name</label>
             <input class="form-control form-control-sm" name="item_name" placeholder="Item Name" value="{{ $item->item_name }}"></input>
           </div>
+
           <div class="form-group">
-            <label class="control-label">Item Price</label>
-            <input class="form-control form-control-sm" type="number" name="item_price" placeholder="Item Price" value="{{ $item->item_price }}" step=".01"></input>
+            <label class="control-label">Purchasing Cost</label>
+            <input class="form-control form-control-sm" name="item_cost" placeholder="Purchasing Cost" value="{{ $item->item_cost }}"></input>
           </div>
+
           <div class="form-group">
             <label class="control-label">Item Type</label>
             <input class="form-control form-control-sm" name="item_type" placeholder="Item Type"></input>
@@ -43,9 +45,10 @@
               <option value="0">Disabled</option>
             </select>
           </div>
+          
           <div class="form-group">
-            <label class="control-label">Item Cost</label>
-            <input class="form-control form-control-sm" name="item_cost" placeholder="Item Cost" value="{{ $item->item_cost }}"></input>
+            <label class="control-label">Selling Price</label>
+            <input class="form-control form-control-sm" type="number" name="item_price" placeholder="Selling Price" value="{{ $item->item_price }}" step=".01"></input>
           </div>
           
           <div class="form-group">

@@ -1,7 +1,7 @@
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
   <!-- Sidebar - Brand -->
-  <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+  <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url('/home') }}">
     <div class="sidebar-brand-icon rotate-n-15">
       <i class="fas fa-laugh-wink"></i>
     </div>
@@ -13,7 +13,7 @@
 
   <!-- Nav Item - Dashboard -->
   <li class="nav-item active">
-    <a class="nav-link" href="index.html">
+    <a class="nav-link" href="{{ url('/home') }}">
       <i class="fas fa-fw fa-tachometer-alt"></i>
       <span>Dashboard</span></a>
   </li>
@@ -64,7 +64,7 @@
         <h6 class="collapse-header">Sales Order:</h6>
         <a id="menu_new_sales_order" class="collapse-item" href="{{ route('new_sales_order') }}">New Order</a>
         <a id="menu_view_sales_orders" class="collapse-item" href="{{ route('view_sales_orders') }}">View Orders</a>
-        <a class="collapse-item" href="#">New Fulfillment</a>
+        <a class="collapse-item" href="{{ route('new_fulfilment') }}">New Fulfillment</a>
         <a class="collapse-item" href="#">View Fulfillments</a>
       </div>
     </div>

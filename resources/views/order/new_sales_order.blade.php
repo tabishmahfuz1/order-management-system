@@ -71,11 +71,12 @@
           <thead>
             <tr>
               <th>Item Name</th>
-              <th>Item Cost</th>
-              <th>Item Price</th>
-              <th>Discount</th>
+              <th>Purhcasing Cost</th>
+              <th>Selling Price</th>
+              <th>Discount (%)</th>
               <th>Discount Amount</th>
               <th>Item Rate</th>
+              <th>Tax(%)</th>
               <th>Qty. on Hand</th>
               <th>Quantity</th>
               <th>Item Total</th>
@@ -112,6 +113,7 @@
                 <td><input type="number" name="new_item_disc_per" step=".01" id="new_item_discount" class="form-control calculation_input"/></td>
                 <td><input type="number" name="new_item_disc_amt" step=".01" id="new_item_discount_amount" readonly class="form-control calculation_input"/></td>
                 <td><input type="number" name="new_item_rate" step=".01" id="new_item_rate" class="form-control calculation_input"/></td>
+                <td><input type="number" name="new_item_tax_rate" step=".01" id="new_item_tax_rate" class="form-control calculation_input"/></td>
                 <td><input type="number" name="new_qty_on_hand" id="new_item_qty_on_hand" readonly class="form-control"/></td>
                 <td><input type="number" name="new_item_qty" id="new_item_quantity" class="form-control calculation_input"/></td>
                 <td><input type="number" name="new_item_total" step=".01" id="new_item_total" readonly class="form-control"/></td>
@@ -123,7 +125,7 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="7" rowspan="5">
+              <td colspan="8" rowspan="6">
                 <textarea name="order[memo]" class="form-control" placeholder="Memo"></textarea> 
               </td>
               <th>Sub Total</th>
@@ -145,6 +147,12 @@
               <th>Other Cost</th>
               <td>
                 <input type="number" step="0.01" name="order[other_costs]" id="other_costs" class="form-control" onchange="calculateTotals()"/>
+              </td>
+            </tr>
+            <tr>
+              <th>Tax Amount</th>
+              <td>
+                <input type="number" step="0.01" name="order[tax_amt]" id="tax_amt" class="form-control" onchange="calculateTotals()"/>
               </td>
             </tr>
             <tr>
@@ -264,6 +272,9 @@
         </td>
         <td>
           <input type="number" name="order[items][${row_num}][item_rate]" value="${item.item_rate}" step=".01" readonly class="form-control"/>
+        </td>
+        <td>
+          <input type="number" name="order[items][${row_num}][item_tax_rate]" value="${item.item_tax_rate}" step=".01" readonly class="form-control item_tax_rate_input"/>
         </td>
         <td>
           <input type="number" name="order[items][${row_num}][qty_on_hand]" value="${item.qty_on_hand}" readonly class="form-control"/>

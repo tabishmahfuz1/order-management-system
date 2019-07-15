@@ -57,7 +57,7 @@ class SalesOrderController extends Controller
     	$order->order_total 	= ($req_order['order_total'] ?? 0);
     	$order->memo 			= $req_order['memo'];
     	$order->save();
-    	$order->sales_order_no 	= 'SO-'.str_pad($order->id, 7);
+    	$order->sales_order_no 	= 'SO-'.str_pad($order->id, 7, "0", STR_PAD_LEFT);
     	$order->save();
 
         $order->addItems($req_order['items']);
@@ -68,7 +68,15 @@ class SalesOrderController extends Controller
     public function addSoItem(Request $req) {
         // dd($req->all());
         $order = SalesOrder::find($req->so_id);
-        $item  = $order->addItems([$req->toArray()], true);
-        return response()->json(array('row' => view('order.so_item_row', compact('item'))->render()));
+        $item  = $order->addItems([$req->toArray()]);
+        $item->item_name = $req->item_name;
+        return response()->json(array('success' => true, 'row' => view('order.so_item_row', compact('item'))->render()));
+    }
+
+    public function getOrderDetail($order_id) {
+        $order = SalesOrder::find($order_id);
+        $order->customer_name = Customer::getNameById($order->customer_id);
+        $order->Items = $order->getItemsWithNames();
+        return response()->json($order);
     }
 }

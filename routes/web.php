@@ -44,5 +44,11 @@ Route::prefix('order')->group(function(){
 	Route::get('/edit_sales_order/{order_id?}', 'SalesOrderController@editOrder')->name('edit_sales_order');
 	Route::post('/save_sales_order', 'SalesOrderController@saveOrder')->name('save_sales_order');
 	Route::post('add_so_item', 'SalesOrderController@addSoItem')->name('add_so_item');
+
+	Route::get('get_order_detail_for_fulfilment/{order_id?}', 'SalesOrderController@getOrderDetail')->name('get_order_detail_for_fulfilment');
+});
+
+Route::prefix('fulfilment')->group(function(){
+	Route::get('new_fulfilment', 'FulfilmentController@newFulfilment')->name('new_fulfilment');	
 });
 

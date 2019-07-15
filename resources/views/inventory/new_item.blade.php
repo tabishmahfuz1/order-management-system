@@ -29,8 +29,8 @@
             <input class="form-control form-control-sm" name="item_name" placeholder="Item Name"></input>
           </div>
           <div class="form-group">
-            <label class="control-label">Item Price</label>
-            <input class="form-control form-control-sm" type="number" step=".01" name="item_price" placeholder="Item Price" ></input>
+            <label class="control-label">Purhcasing Cost</label>
+            <input class="form-control form-control-sm" name="item_cost" type="number" step=".01" placeholder="Purhcasing Cost"></input>
           </div>
           <div class="form-group">
             <label class="control-label">Item Type</label>
@@ -46,8 +46,8 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="control-label">Item Cost</label>
-            <input class="form-control form-control-sm" name="item_cost" type="number" step=".01" placeholder="Item Cost"></input>
+            <label class="control-label">Selling Price</label>
+            <input class="form-control form-control-sm" type="number" step=".01" name="item_price" placeholder="Selling Price" ></input>
           </div>
           
           <div class="form-group">

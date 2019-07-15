@@ -11,6 +11,10 @@ class SalesOrder extends Model
 		return $this->hasMany('App\SalesOrderItemDetail', 'sales_order_id');
 	}
 
+    public function Customer() {
+        return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
     public function addItems(array $items) {
     	foreach ($items as $r_item) {
     		if(isset($r_item['so_item_id']))
@@ -31,5 +35,9 @@ class SalesOrder extends Model
     		$item->save();
     	}
     	return $item;
+    }
+
+    public function getItemsWithNames() {
+        return SalesOrderItemDetail::where('sales_order_id', $this->id)->join('items', 'items.id', '=', 'sales_order_item_details.item_id')->select('sales_order_item_details.*', 'items.item_name')->get();
     }
 }

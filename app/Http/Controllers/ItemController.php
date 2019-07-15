@@ -38,7 +38,7 @@ class ItemController extends Controller
     }
 
     public function viewItems(Request $req) {
-    	$items = Item::orderBy('id', 'DESC')->get();
+    	$items = Item::orderBy('item_name', 'ASC')->get();
     	return view('inventory.view_items', compact('items'));
     }
 

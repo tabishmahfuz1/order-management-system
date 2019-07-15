@@ -4,10 +4,10 @@
 <div class="container-fluid">
 
 <!-- Page Heading -->
-<h4 class="h3 mb-2 text-gray-800">Items</h4>
+<h4 class="h3 mb-2 text-gray-800">{{ $customer_module_name ?? "Distributors" }}</h4>
 <div class="card shadow mb-4">
   <div class="card-header py-3">
-    <h6 class="m-0 font-weight-bold text-primary">Manage Items</h6>
+    <h6 class="m-0 font-weight-bold text-primary">Manage {{ $customer_module_name ?? "Distributors" }}</h6>
   </div>
   <div class="card-body">
     <div class="table-responsive">
@@ -61,6 +61,6 @@
 <script src="{{ asset('js/demo/datatables-demo.js') }}"></script>
 
 <script type="text/javascript">
-  var menu_id = "view_items";
+  var menu_id = "view_customers";
 </script>
 @endsection

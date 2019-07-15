@@ -60,6 +60,17 @@
             </select>
           </div>
         </div>
+        <div class="col">
+          <div class="form-group">
+            <label class="control-label">State</label>
+            <select name="state" class="select2 form-control form-control-sm">
+              <option value="">Select State</option>
+              @foreach($states as $state)
+                <option value="{{ $state->id }}">{{ $state->name }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
         </div>
         
         <div class="text-center">
