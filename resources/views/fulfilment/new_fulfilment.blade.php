@@ -84,36 +84,24 @@
           </div>
         </div>
       </div>
-      <textarea name="order[memo]" 
-                  id="order_memo" 
-                  objName="order" 
-                  data-objProp="memo" 
-                  class="form-control" 
-                  placeholder="Memo"></textarea> 
       <div class="row">
-        <table class="table table-striped table-bordered table-hover table-sm">
-          <colgroup>
-            <col width="15%">
-            <col>
-            <col>
-            <col>
-            <col>
-            <col width="15%">
-            <col>
-          </colgroup>
+        <div class="col">
+          <textarea name="order[memo]" 
+                id="order_memo" 
+                objName="order" 
+                data-objProp="memo" 
+                class="form-control" 
+                placeholder="Memo" disabled=""></textarea> 
+        </div>
+
+        <table class="table table-striped table-bordered table-hover table-sm col">
           <thead>
             <tr>
-              <th>Item Name</th>
-              <th>Purhcasing Cost</th>
-              <th>Selling Price</th>
-              <th>Discount (%)</th>
-              <th>Discount Amount</th>
+              <th style="width: 40%;">Item Name</th>
               <th>Item Rate</th>
-              <th>Tax(%)</th>
-              <th>Qty. on Hand</th>
-              <th>Quantity</th>
-              <th>Item Total</th>
-              <th></th>
+              <th>Order Qty.</th>
+              <th>Balance Qty.</th>
+              <th>Fulfilment Qty.</th>
             </tr>
           </thead>
           <tbody id="item-list">
@@ -152,12 +140,35 @@
     $.get('{{ route("get_order_detail_for_fulfilment") }}/' + orderId, (data) => {
       // console.log(data);
       updateOrder(data);
-      renderItems(data.items);
+      renderItems(data.Items);
     });
   }
 
   function renderItems(items) {
-    
+    let itemsHtml = items.reduce((acc, item) => {
+      return acc += createItemRow(item);
+    },``);
+
+    $('#item-list').html(itemsHtml);
+  }
+
+  function createItemRow(item) {
+    return `@include('fulfilment.fulfilment_item_row', 
+                ["item" => ['so_item_id' => '${item.id}', item_name' => '${item.item_name}',  'item_rate' => '${item.item_rate}', 'item_qty' => '${item.item_qty}']])`
+    /*return `<tr data-item_id="${item.id}">
+              <td>
+                <input class="form-control-sm form-control" value="${item.item_name}" disabled />
+              </td>
+              <td>
+                <input class="form-control-sm form-control text-right" value="${item.item_rate}" disabled />
+              </td>
+              <td>
+                <input class="form-control-sm form-control text-center" value="${item.item_qty}" disabled />
+              </td>
+              <td>
+                <input type="number" class="form-control form-control-sm fulfil_qty_input" data-so_item_id="${item.id}" name="item[${item.id}]"/>
+              </td>
+            </tr>`;*/
   }
 
   function updateOrder(data) {
