@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class SalesOrderItemDetail extends Model
 {
+    public function Item() {
+        return $this->belongsTo(Item::class);
+    }
     //
     /**
 	 * Returns Items with Item Name for a particular Order identified by the parameter order_id

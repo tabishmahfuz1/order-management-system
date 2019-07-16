@@ -1,4 +1,4 @@
-<div id="common_danger_alert" class="alert alert-danger fade show" role="alert" style="display: none;">
+<div id="common_danger_alert" class="alert alert-danger fade show ml-4" role="alert" style="display: none;position: fixed;bottom: 0;">
 	<span class="msg_text"><strong>Holy guacamole!</strong> You should check in on some of those fields below.</span>
 	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 	  <span aria-hidden="true">&times;</span>
@@ -20,13 +20,13 @@
 	    // $('.select2').select2();
 	    let $alert = $('#common_danger_alert');
 	    $alert.on("close.bs.alert", function () {
-		      $alert.hide();
+		      $alert.hide({animation:'slide', direction: 'left'});
 		      return false;
 		});
     });
     function showDangerMsg(msg = 'Something went wrong!') {
     	let $alert = $('#common_danger_alert');
     	$alert.find('span.msg_text').html(msg);
-    	$alert.show();
+    	$alert.show({animation:'slide', direction: 'left'});
     }
 </script>

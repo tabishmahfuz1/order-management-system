@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\SalesOrder;
+use App\Fulfilment;
 
 class FulfilmentController extends Controller
 {
@@ -20,10 +21,13 @@ class FulfilmentController extends Controller
     }
 
     public function saveFulfilment(Request $req) {
-    	dd($req->all());
+    	// dd($req->all());
+        $fulfilment = Fulfilment::saveFulfilment($req->fulfilment);
+        return redirect()->route('edit_fulfilment', ['order_id' => $fulfilment->id]);
     }
 
     public function editFulfilment($id) {
-    	
+    	$fulfilment = Fulfilment::find($id);
+        return view('fulfilment.edit_fulfilment', compact('fulfilment'));
     }
 }

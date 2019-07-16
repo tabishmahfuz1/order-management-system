@@ -5,6 +5,7 @@
       <th>Item Rate</th>
       <th>Order Qty.</th>
       <th>Balance Qty.</th>
+      <th>Qty. on Hand</th>
       <th>Fulfilment Qty.</th>
     </tr>
   </thead>

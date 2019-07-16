@@ -12,7 +12,7 @@
   </div>
   <div class="card shadow-sm">
   <div class="card-header with-border">
-    <h6 class="m-0 font-weight-bold text-primary">New {{ $fulfilment_module_name ?? "Fulfilment" }}</h6>
+    <h6 class="m-0 font-weight-bold text-primary">Edit {{ $fulfilment_module_name ?? "Fulfilment" }}</h6>
 
     <!-- <div class="box-tools pull-right">
       <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -28,18 +28,18 @@
               data-objProp="id" 
               name="order[id]" 
               value="">
+      <input type="hidden" 
+              name="fulfilment[fulfilment_id]" 
+              value="{{ $fulfilment->id }}">
       <div class="row">
         <div class="col">
           <div class="form-group">
             <label class="control-label">Sales Order Number</label>
-            <select class="select2 form-control-sm form-control" 
-                    name="fulfilment[so_id]" 
-                    onchange="getOrderDetails(this)">
-              <option value="">Select Sales Order</option>
-              @foreach($orders as $order)
-                <option value="{{ $order->id }}">{{ $order->sales_order_no }}</option>
-              @endforeach
-            </select>
+            <input type="text" 
+                    name="fulfilment[so_id]"
+                    class="form-control form-control-sm"
+                    disabled="" 
+                    value="{{ $fulfilment->Order->sales_order_no }}" />
           </div>
         </div>
         <div class="col">
@@ -50,7 +50,7 @@
                     data-objProp="order_date" 
                     name="order[order_date]" 
                     class="form-control form-control-sm datepicker" 
-                    value="" 
+                    value="{{ $fulfilment->Order->order_date }}" 
                     id="order_date" 
                     disabled />
           </div>
@@ -62,7 +62,7 @@
                     objName="order" 
                     data-objProp="customer_name" 
                     name="order[customer_name]" 
-                    value="" 
+                    value="{{ $fulfilment->Order->CustomerName() }}" 
                     id="customer_name" 
                     class="form-control-sm form-control" disabled />
           </div>
@@ -75,7 +75,7 @@
                     data-objProp="ref_no" 
                     name="order[ref_no]" 
                     id="order_ref_no" 
-                    value="" 
+                    value="{{ $fulfilment->Order->ref_no }}" 
                     class="form-control form-control-sm" 
                     disabled/>
           </div>
@@ -88,7 +88,7 @@
             <input type="text" 
                     name="fulfilment_no" 
                     class="form-control-sm form-control" 
-                    value="(Auto Generated)" 
+                    value="{{ $fulfilment->fulfilment_no }}" 
                     disabled />
           </div>
         </div>
@@ -99,7 +99,7 @@
                     name="fulfilment[fulfilment_date]" 
                     id="fulfilment_date" 
                     class="form-control-sm form-control datepicker" 
-                    value="" />
+                    value="{{ $fulfilment->fulfilment_date }}" />
           </div>
         </div>
         <div class="col"> </div>
@@ -107,7 +107,7 @@
       </div>  
       <div class="row">
         <div class="col-md-8">  
-            @include('fulfilment.item_detail')
+            @include('fulfilment.item_detail', [ 'items' => $fulfilment->FullItemDetails() ])
         </div>
 
         <div class="col-md-4">
@@ -116,7 +116,7 @@
                 objName="order" 
                 data-objProp="memo" 
                 class="form-control" 
-                placeholder="Memo" disabled=""></textarea> 
+                placeholder="Memo" disabled="">{{ $fulfilment->Order->memo }}</textarea> 
         </div>
       </div>
 
@@ -205,10 +205,13 @@
   }
 
   function validateForm() {
-    if(!$('input#fulfilment_date').val().trim()){
-      $('input#fulfilment_date').addClass('is-invalid');
+    if($('input[name=name]').val().trim() !== '')
+      return true;
+    else {
+      $('input[name=name]').addClass('is-invalid');
       return false;
     }
+
   }
 
   function SubmitForm() {

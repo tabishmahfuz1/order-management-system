@@ -42,7 +42,7 @@ class SalesOrderController extends Controller
     		$order = SalesOrder::find($req->order_id);
     	else
     		$order = new SalesOrder();
-
+        
     	$order->customer_id 	= $req_order['customer_id'];
         $order->order_date      = date('Y-m-d', strtotime($req_order['order_date']));
         $order->sales_order_no  = 'TEMP';
