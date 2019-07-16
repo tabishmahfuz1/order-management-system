@@ -21,7 +21,7 @@
   <!-- /.box-header -->
   <div class="card-body">
 
-    <form action="{{ route('save_sales_order') }}" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
+    <form action="{{ route('save_fulfilment') }}" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
       {{csrf_field()}}
       <input type="hidden" 
               name="order_id" 
@@ -84,8 +84,28 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row"> 
         <div class="col">
+          <div class="form-group">
+            <label class="control-label">Fulfilment Number</label>
+            <input type="text" name="fulfilment_no" class="form-control-sm form-control" value="(Auto Generated)" disabled />
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label class="control-label">Fulfilment Date</label>
+            <input type="text" name="fulfilment_date" id="fulfilment_date" class="form-control-sm form-control datepicker" value="" />
+          </div>
+        </div>
+        <div class="col"> </div>
+        <div class="col"> </div>
+      </div>  
+      <div class="row">
+        <div class="col-md-8">  
+            @include('fulfilment.item_detail')
+        </div>
+
+        <div class="col-md-4">
           <textarea name="order[memo]" 
                 id="order_memo" 
                 objName="order" 
@@ -93,22 +113,11 @@
                 class="form-control" 
                 placeholder="Memo" disabled=""></textarea> 
         </div>
-
-        <table class="table table-striped table-bordered table-hover table-sm col">
-          <thead>
-            <tr>
-              <th style="width: 40%;">Item Name</th>
-              <th>Item Rate</th>
-              <th>Order Qty.</th>
-              <th>Balance Qty.</th>
-              <th>Fulfilment Qty.</th>
-            </tr>
-          </thead>
-          <tbody id="item-list">
-            
-          </tbody>
-        </table>
       </div>
+
+      <div class="row">
+      </div>
+      
       <div class="text-center">
         <button type="submit" class="btn btn-primary">Save</button>
       </div>
@@ -130,9 +139,9 @@
   var menu_id = "new_fulfilment";
   $(function(){
     $('.select2').select2();
-    $('.datepicker').datepicker({
-      format: 'yyyy-mm-dd'
-    });
+    $('#fulfilment_date').datepicker({
+      format: 'yyyy-mm-dd',
+    }).datepicker('setDate', 'today');
   });
 
   async function getOrderDetails(thisSelect) {
@@ -153,22 +162,16 @@
   }
 
   function createItemRow(item) {
-    return `@include('fulfilment.fulfilment_item_row', 
-                ["item" => ['so_item_id' => '${item.id}', item_name' => '${item.item_name}',  'item_rate' => '${item.item_rate}', 'item_qty' => '${item.item_qty}']])`
-    /*return `<tr data-item_id="${item.id}">
-              <td>
-                <input class="form-control-sm form-control" value="${item.item_name}" disabled />
-              </td>
-              <td>
-                <input class="form-control-sm form-control text-right" value="${item.item_rate}" disabled />
-              </td>
-              <td>
-                <input class="form-control-sm form-control text-center" value="${item.item_qty}" disabled />
-              </td>
-              <td>
-                <input type="number" class="form-control form-control-sm fulfil_qty_input" data-so_item_id="${item.id}" name="item[${item.id}]"/>
-              </td>
-            </tr>`;*/
+    return `@include('fulfilment.item_row', 
+                ["item" => 
+                  [
+                    'so_item_id' => '${item.id}', 
+                    'item_name' => '${item.item_name}',  
+                    'item_rate' => '${item.item_rate}', 
+                    'item_qty' => '${item.item_qty}', 
+                    'balance_qty' => '${item.balance_qty}'
+                  ]
+                ])`;
   }
 
   function updateOrder(data) {
@@ -192,6 +195,17 @@
       return false;
     }
 
+  }
+
+  function SubmitForm() {
+    let so_id = updateOrder.Order.id,
+        data = {
+          so_id
+        }; 
+    data['_token'] = '{{ Session::token() }}';
+    data['items']  = [];
+    $('.fulfil_qty_input').each(function(){ data['items'][$(this).data('so_item_id')] = $(this).val(); });
+    console.table(data)
   }
 </script>
 <!-- /.container-fluid -->

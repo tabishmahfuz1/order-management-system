@@ -49,6 +49,8 @@ Route::prefix('order')->group(function(){
 });
 
 Route::prefix('fulfilment')->group(function(){
-	Route::get('new_fulfilment', 'FulfilmentController@newFulfilment')->name('new_fulfilment');	
+	Route::get('new_fulfilment/{order_id?}', 'FulfilmentController@newFulfilment')->name('new_fulfilment');	
+	Route::post('save_fulfilment', 'FulfilmentController@saveFulfilment')->name('save_fulfilment');
+	Route::get('edit_fulfilment/{id?}', 'FulfilmentController@editFulfilment')->name('edit_fulfilment');
 });
 
