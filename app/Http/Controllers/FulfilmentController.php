@@ -30,4 +30,12 @@ class FulfilmentController extends Controller
     	$fulfilment = Fulfilment::find($id);
         return view('fulfilment.edit_fulfilment', compact('fulfilment'));
     }
+
+    public function viewFulfilments(Request $req) {
+        $fulfilments = Fulfilment::join('sales_orders', 'sales_orders.id', '=', 'fulfilments.so_id')
+                                    ->join('customers', 'customers.id', '=', 'sales_orders.customer_id')
+                                    ->select('fulfilments.*', 'sales_orders.sales_order_no', 'sales_orders.order_date', 'customers.name AS customer_name')
+                                    ->get();
+        return view('fulfilment.view_fulfilments', compact('fulfilments'));
+    }
 }

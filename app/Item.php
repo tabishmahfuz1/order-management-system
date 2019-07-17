@@ -14,14 +14,17 @@ class Item extends Model
 
     public function setQuantityOnHand(int $qty) {
     	$this->qty_on_hand = $qty;
+    	return $this;
     }
 
     public function decreaseQuantityOnHand(int $qty) {
     	$this->qty_on_hand -= $qty;
+    	return $this;
     }
 
     public function increaseQuantityOnHand(int $qty) {
     	$this->qty_on_hand += $qty;
+    	return $this;
     }
 
 

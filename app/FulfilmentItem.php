@@ -15,11 +15,17 @@ class FulfilmentItem extends Model
     	return $this->belongsTo(SalesOrderItemDetail::class);
     }
 
+    public function setRemainingStock(int $qty) {
+    	$this->remaining_stock = $qty;
+    	return $this;
+    }
+
     public static function saveItem($item) {
     	$response = [];
-    	if(isset($fulfilmentItem['fulfilment_item_id'])){
+    	if(!empty($item['fulfilment_item_id'])){
     		$fulfilmentItem = self::find($item['fulfilment_item_id']);
-    		$response['old']= $fulfilmentItem->toArray();
+    		$response['old']= $fulfilmentItem->replicate();
+    		// dd($response);
     	}
     	else
     		$fulfilmentItem = new self;
@@ -30,7 +36,8 @@ class FulfilmentItem extends Model
     		$fulfilmentItem[$key] = $value;
     	}
     	$fulfilmentItem->save();
-    	$response['new']= $fulfilmentItem->toArray();
+    	$response['new']= $fulfilmentItem;
+    	// dd($response);
     	return $response;
     }
     

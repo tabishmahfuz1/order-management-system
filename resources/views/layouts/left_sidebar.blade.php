@@ -64,8 +64,8 @@
         <h6 class="collapse-header">Sales Order:</h6>
         <a id="menu_new_sales_order" class="collapse-item" href="{{ route('new_sales_order') }}">New Order</a>
         <a id="menu_view_sales_orders" class="collapse-item" href="{{ route('view_sales_orders') }}">View Orders</a>
-        <a class="collapse-item" href="{{ route('new_fulfilment') }}">New Fulfillment</a>
-        <a class="collapse-item" href="#">View Fulfillments</a>
+        <a id="menu_new_fulfilment" class="collapse-item" href="{{ route('new_fulfilment') }}">New Fulfillment</a>
+        <a id="menu_view_fulfilments" class="collapse-item" href="{{ route('view_fulfilments') }}">View Fulfillments</a>
       </div>
     </div>
   </li>

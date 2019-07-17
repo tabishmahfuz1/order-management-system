@@ -69,7 +69,8 @@ class Fulfilment extends Model
     		if(!empty($item['fulfilment_id']))
     			$stock 					+= $fulfilment_item['old']['fulfilment_qty'];
     		$stock 						-= $fulfilment_item['new']['fulfilment_qty'];
-    		$so_item->Item->setQuantityOnHand($stock);
+    		$fulfilment_item['new']->setRemainingStock($stock)->save();
+    		$so_item->Item->setQuantityOnHand($stock)->save();
 
     	}
     }
