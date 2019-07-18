@@ -9,6 +9,24 @@ class SalesOrderItemDetail extends Model
     public function Item() {
         return $this->belongsTo(Item::class);
     }
+
+    public function getOrderedQty() {
+        return $this->item_qty;
+    }
+
+    public function getBalanceQty() {
+        return $this->balance_qty;
+    }
+
+    public function isCompletelyFulfilled() {
+        return ($this->balance_qty == 0);
+    }
+
+    public function getFulfilledQty() {
+        return ($this->item_qty - ($this->balance_qty ?? 0));
+    }
+
+
     //
     /**
 	 * Returns Items with Item Name for a particular Order identified by the parameter order_id

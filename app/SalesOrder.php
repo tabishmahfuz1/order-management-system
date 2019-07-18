@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class SalesOrder extends Model
 {
     //
+
+    public $FULFILLED           = 'FULFILLED';
+    public $PARTIALLY_FULFILLED = 'PARTIALLY_FULFILLED';
+
 	public function Items() {
 		return $this->hasMany('App\SalesOrderItemDetail', 'sales_order_id');
 	}
@@ -17,6 +21,12 @@ class SalesOrder extends Model
 
     public function CustomerName() {
         return Customer::getNameById($this->customer_id);
+    }
+
+    public function isCompletelyFulfilled() {
+        return SalesOrderItemDetail::where('sales_order_id', $this->id)
+                ->where('balance_qty', '>', 0)
+                ->exists();
     }
 
     public function addItems(array $items) {
@@ -46,10 +56,18 @@ class SalesOrder extends Model
     }
 
     public function getItemsWithNames() {
-        return SalesOrderItemDetail::where('sales_order_id', $this->id)->join('items', 'items.id', '=', 'sales_order_item_details.item_id')->select('sales_order_item_details.*', 'items.item_name')->get();
+        return SalesOrderItemDetail::where('sales_order_id', $this->id)
+                ->join('items', 'items.id', '=', 'sales_order_item_details.item_id')
+                ->select('sales_order_item_details.*', 'items.item_name')
+                ->get();
     }
 
-    // ***********************************************************  Static Functions ****************************************************
+    public function setStatus($status) {
+        $this->status = $status;
+        return $this;
+    }
+
+    // ************************  Static Functions ***************************
     public static function getStatuses() {
         return StatusModel::where('module', 'SO')->get();
     }

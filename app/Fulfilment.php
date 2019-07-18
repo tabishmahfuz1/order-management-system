@@ -48,7 +48,19 @@ class Fulfilment extends Model
     	if($items)
     		$fulfilmentOb->setItems($items);
 
+        $fulfilmentOb->updateOrderStatus();
+
     	return $fulfilmentOb;
+    }
+
+    public function updateOrderStatus() {
+        if($this->Order->isCompletelyFulfilled()) {
+            $this->Order->setStatus(SalesOrder::FULFILLED)
+                        ->save();
+        } else {
+            $this->Order->setStatus(SalesOrder::PARTIALLY_FULFILLED)
+                        ->save();
+        }
     }
 
     public function setItems($items) {
@@ -71,7 +83,6 @@ class Fulfilment extends Model
     		$stock 						-= $fulfilment_item['new']['fulfilment_qty'];
     		$fulfilment_item['new']->setRemainingStock($stock)->save();
     		$so_item->Item->setQuantityOnHand($stock)->save();
-
     	}
     }
 }
