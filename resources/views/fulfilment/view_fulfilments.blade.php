@@ -44,7 +44,7 @@
                 <td> @date($fulfilment->fulfilment_date) </td>
                 <td>{{ $fulfilment->sales_order_no }}</td>
                 <td>{{ $fulfilment->order_date }}</td>
-                <td>{{ $fulfilment->customer }}</td>
+                <td>{{ $fulfilment->customer_name }}</td>
                 <td>{{ $fulfilment->ref_no }}</td>
                 <td class="text-center">{{ $fulfilment->status == 1 ? "Active" : "Disabled" }}</td>
                 <td class="text-center"><a href="{{ route('edit_fulfilment', [ $fulfilment->id ]) }}"><i class="fa fa-edit"></i></a></td>

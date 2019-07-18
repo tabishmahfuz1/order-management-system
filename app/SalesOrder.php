@@ -48,4 +48,9 @@ class SalesOrder extends Model
     public function getItemsWithNames() {
         return SalesOrderItemDetail::where('sales_order_id', $this->id)->join('items', 'items.id', '=', 'sales_order_item_details.item_id')->select('sales_order_item_details.*', 'items.item_name')->get();
     }
+
+    // ***********************************************************  Static Functions ****************************************************
+    public static function getStatuses() {
+        return StatusModel::where('module', 'SO')->get();
+    }
 }

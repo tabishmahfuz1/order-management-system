@@ -59,11 +59,14 @@
           <div class="form-group">
             <label class="control-label">Order Status</label>
             <select type="text" name="order[status]" class="form-control form-control-sm" id="order_status">
-              <option value="NEW_ORDER">New Order</option>
+              <!-- <option value="NEW_ORDER">New Order</option>
               <option value="IN_PROCESS">In Process</option>
               <option value="DISPATCHED">Dispatched</option>
               <option value="DELIVERED">Delivered</option>
-              <option value="CLOSED">Closed</option>
+              <option value="CLOSED">Closed</option> -->
+              @foreach($statuses as $status)
+                <option value="{{ $status->code }}">{{ $status->name }}</option>
+              @endforeach
             </select>
           </div>
         </div>
@@ -194,7 +197,7 @@
 <script src="{{asset('custom-libraries/select2/dist/js/select2.full.min.js')}}"></script>
 
 <script type="text/javascript">
-  var menu_id = "new_sales_order";
+  var menu_id = "view_sales_order";
   $('#customer-select').val('{{ $order->customer_id }}');
   $(function(){
     $('.select2').select2();

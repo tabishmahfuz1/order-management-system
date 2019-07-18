@@ -32,7 +32,8 @@ class SalesOrderController extends Controller
     	$so_items = SalesOrderItemDetail::getOrderItems($order_id);
     	$items = Item::where('status', 1)->select('id', 'item_name')->get();
     	$customers = Customer::select('id', 'name', 'discount')->get();
-    	return view('order.edit_sales_order', compact('order', 'so_items', 'items', 'customers'));
+        $statuses = SalesOrder::getStatuses();
+    	return view('order.edit_sales_order', compact('order', 'so_items', 'items', 'customers', 'statuses'));
     }
 
     public function saveOrder(Request $req) {
@@ -55,7 +56,8 @@ class SalesOrderController extends Controller
     	$order->freight 		= ($req_order['freight'] ?? 0);
     	$order->other_costs 	= ($req_order['other_costs'] ?? 0);
     	$order->order_total 	= ($req_order['order_total'] ?? 0);
-    	$order->memo 			= $req_order['memo'];
+        $order->memo            = $req_order['memo'];
+    	$order->status 			= $req_order['status'];
     	$order->save();
     	$order->sales_order_no 	= 'SO-'.str_pad($order->id, 7, "0", STR_PAD_LEFT);
     	$order->save();
