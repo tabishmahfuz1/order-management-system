@@ -174,6 +174,7 @@
                     'item_name' => '${item.item_name}',  
                     'item_rate' => '${item.item_rate}', 
                     'item_qty' => '${item.item_qty}', 
+                    'qty_on_hand' => '${item.item_qty_on_hand}', 
                     'balance_qty' => '${item.balance_qty}'
                   ]
                 ])`;
@@ -195,11 +196,17 @@
   function validateFulfilQty(thisInput) {
     let $thisTr = $(thisInput).closest('tr'),
         bal_qty = parseInt($thisTr.find('.balance_qty_input').val()),
+        order_qty = parseInt($thisTr.find('.item_qty_input').val()),
+        in_stock = parseInt($thisTr.find('.qty_on_hand_input').val()),
         fulfil_qty= parseInt($(thisInput).val());
     if(bal_qty < fulfil_qty) {
       $(thisInput).addClass('is-invalid');
       showDangerMsg("Fulfilment Quantity can't be greater than Balance Quantity");
-    } else {
+      return false;
+    } else if(in_stock < fulfil_qty){
+      $(thisInput).addClass('is-invalid');
+      showDangerMsg("Insufficien Quantity in Stock");
+    }else {
       $(thisInput).removeClass('is-invalid');
     }
   }
@@ -209,6 +216,8 @@
       $('input#fulfilment_date').addClass('is-invalid');
       return false;
     }
+
+    return validateFulfilQty();
   }
 
   function SubmitForm() {

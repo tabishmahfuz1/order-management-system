@@ -8,8 +8,8 @@ class SalesOrder extends Model
 {
     //
 
-    public $FULFILLED           = 'FULFILLED';
-    public $PARTIALLY_FULFILLED = 'PARTIALLY_FULFILLED';
+    public const FULFILLED           = 'FULFILLED';
+    public const PARTIALLY_FULFILLED = 'PARTIALLY_FULFILLED';
 
 	public function Items() {
 		return $this->hasMany('App\SalesOrderItemDetail', 'sales_order_id');
@@ -24,9 +24,9 @@ class SalesOrder extends Model
     }
 
     public function isCompletelyFulfilled() {
-        return SalesOrderItemDetail::where('sales_order_id', $this->id)
+        return !(SalesOrderItemDetail::where('sales_order_id', $this->id)
                 ->where('balance_qty', '>', 0)
-                ->exists();
+                ->exists());
     }
 
     public function addItems(array $items) {
@@ -63,7 +63,7 @@ class SalesOrder extends Model
     }
 
     public function setStatus($status) {
-        $this->status = $status;
+        $this->status = StatusModel::getStatusIdByCode($status);
         return $this;
     }
 

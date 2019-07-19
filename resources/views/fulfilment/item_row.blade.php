@@ -21,7 +21,7 @@
   </td>
   <td>
     <input class="form-control-sm form-control text-center qty_on_hand_input" 
-            value="{{ (($item['qty_on_hand'] ?? 0) + ($item['fulfilment_qty'] ?? 0)) }}" 
+            value="{{ ($item['qty_on_hand'] ?? 0) }}" 
             disabled />
   </td>
   <td>

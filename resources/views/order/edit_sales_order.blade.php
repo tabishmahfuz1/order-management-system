@@ -65,7 +65,7 @@
               <option value="DELIVERED">Delivered</option>
               <option value="CLOSED">Closed</option> -->
               @foreach($statuses as $status)
-                <option value="{{ $status->code }}">{{ $status->name }}</option>
+                <option value="{{ $status->id }}">{{ $status->name }}</option>
               @endforeach
             </select>
           </div>
