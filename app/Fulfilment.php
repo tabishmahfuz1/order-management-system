@@ -19,7 +19,9 @@ class Fulfilment extends Model
     	return FulfilmentItem::join('sales_order_item_details', 'sales_order_item_details.id', '=', 'fulfilment_items.so_item_id')
     					->where('fulfilment_items.fulfilment_id', $this->id)
     					->join('items', 'items.id', '=', 'fulfilment_items.item_id')
-    					->select('fulfilment_items.*', 'sales_order_item_details.item_qty', 'sales_order_item_details.item_rate', 'items.item_name', DB::Raw('(items.qty_on_hand + fulfilment_items.fulfilment_qty) AS qty_on_hand'))
+    					->select('fulfilment_items.*', 'sales_order_item_details.item_qty',  'sales_order_item_details.item_rate', 'items.item_name',
+                            DB::Raw('(items.qty_on_hand + fulfilment_items.fulfilment_qty) AS qty_on_hand'),
+                            DB::Raw('(sales_order_item_details.balance_qty + fulfilment_items.fulfilment_qty) AS balance_qty'))
     					->get();
     }
 
@@ -59,16 +61,18 @@ class Fulfilment extends Model
 
     public function updateOrderStatus() {
         if($this->Order->isCompletelyFulfilled()) {
-            $this->Order->setStatus(SalesOrder::FULFILLED)
+            $this->Order->setFulfilmentStatus(SalesOrder::FULFILLED)
                         ->save();
         } else {
-            $this->Order->setStatus(SalesOrder::PARTIALLY_FULFILLED)
+            $this->Order->setFulfilmentStatus(SalesOrder::PARTIALLY_FULFILLED)
                         ->save();
         }
     }
 
     public function setItems($items) {
     	foreach ($items as $key => $item) {
+            if(!$item['fulfilment_qty'] || $item['fulfilment_qty'] == 0)
+                continue;
     		$so_item 					= SalesOrderItemDetail::find($item['so_item_id']);
     		$item['item_id'] 			= $so_item->item_id;
     		$item['balance_qty'] 		= $so_item->balance_qty;

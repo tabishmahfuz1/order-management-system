@@ -34,6 +34,7 @@
             <label class="control-label">Sales Order Number</label>
             <select class="select2 form-control-sm form-control" 
                     name="fulfilment[so_id]" 
+                    id="sales_order_select"
                     onchange="getOrderDetails(this)">
               <option value="">Select Sales Order</option>
               @foreach($orders as $order)
@@ -147,6 +148,10 @@
     $('#fulfilment_date').datepicker({
       format: 'yyyy-mm-dd',
     }).datepicker('setDate', 'today');
+    @isset($order_id)
+      $('#sales_order_select').val('{{ $order_id }}');
+      $('#sales_order_select').change();
+    @endisset
   });
 
   async function getOrderDetails(thisSelect) {
@@ -167,6 +172,7 @@
   }
 
   function createItemRow(item) {
+    item.recommended_fulfilment_qty = Math.min(item.qty_on_hand, item.balance_qty);
     return `@include('fulfilment.item_row', 
                 ["item" => 
                   [
@@ -174,8 +180,9 @@
                     'item_name' => '${item.item_name}',  
                     'item_rate' => '${item.item_rate}', 
                     'item_qty' => '${item.item_qty}', 
-                    'qty_on_hand' => '${item.item_qty_on_hand}', 
-                    'balance_qty' => '${item.balance_qty}'
+                    'qty_on_hand' => '${item.qty_on_hand}', 
+                    'balance_qty' => '${item.balance_qty}',
+                    'fulfilment_qty' => '${item.recommended_fulfilment_qty}'
                   ]
                 ])`;
   }
@@ -200,14 +207,18 @@
         in_stock = parseInt($thisTr.find('.qty_on_hand_input').val()),
         fulfil_qty= parseInt($(thisInput).val());
     if(bal_qty < fulfil_qty) {
+      // console.log(bal_qty, fulfil_qty);
       $(thisInput).addClass('is-invalid');
       showDangerMsg("Fulfilment Quantity can't be greater than Balance Quantity");
       return false;
     } else if(in_stock < fulfil_qty){
+      // console.log(in_stock, fulfil_qty);
       $(thisInput).addClass('is-invalid');
       showDangerMsg("Insufficien Quantity in Stock");
+      return false;
     }else {
       $(thisInput).removeClass('is-invalid');
+      return true;
     }
   }
 
@@ -216,8 +227,14 @@
       $('input#fulfilment_date').addClass('is-invalid');
       return false;
     }
-
-    return validateFulfilQty();
+    let validQtys = true;
+    $('.fulfil_qty_input').each(function(){
+      if(!validateFulfilQty(this)){
+        validQtys = false;
+        return false;
+      }
+    });
+    return validQtys;
   }
 
   function SubmitForm() {

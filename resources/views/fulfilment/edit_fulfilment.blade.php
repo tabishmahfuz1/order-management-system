@@ -195,23 +195,38 @@
   function validateFulfilQty(thisInput) {
     let $thisTr = $(thisInput).closest('tr'),
         bal_qty = parseInt($thisTr.find('.balance_qty_input').val()),
+        order_qty = parseInt($thisTr.find('.item_qty_input').val()),
+        in_stock = parseInt($thisTr.find('.qty_on_hand_input').val()),
         fulfil_qty= parseInt($(thisInput).val());
     if(bal_qty < fulfil_qty) {
+      // console.log(bal_qty, fulfil_qty);
       $(thisInput).addClass('is-invalid');
       showDangerMsg("Fulfilment Quantity can't be greater than Balance Quantity");
-    } else {
+      return false;
+    } else if(in_stock < fulfil_qty){
+      // console.log(in_stock, fulfil_qty);
+      $(thisInput).addClass('is-invalid');
+      showDangerMsg("Insufficien Quantity in Stock");
+      return false;
+    }else {
       $(thisInput).removeClass('is-invalid');
+      return true;
     }
   }
 
   function validateForm() {
-    if($('input[name=name]').val().trim() !== '')
-      return true;
-    else {
-      $('input[name=name]').addClass('is-invalid');
+    if(!$('input#fulfilment_date').val().trim()){
+      $('input#fulfilment_date').addClass('is-invalid');
       return false;
     }
-
+    let validQtys = true;
+    $('.fulfil_qty_input').each(function(){
+      if(!validateFulfilQty(this)){
+        validQtys = false;
+        return false;
+      }
+    });
+    return validQtys;
   }
 
   function SubmitForm() {

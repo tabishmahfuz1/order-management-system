@@ -43,7 +43,9 @@ class CustomerController extends Controller
     }
 
     public function viewCustomers(Request $req) {
-    	$customers = Customer::orderBy('id', 'DESC')->get();
+    	$customers = Customer::join('state_models', 'state_models.id', '=', 'customers.state_id')
+                    ->select('customers.*', 'state_models.name AS state')
+                    ->orderBy('id', 'DESC')->get();
     	return view('customer.view_customers', compact('customers'));
     }
 }

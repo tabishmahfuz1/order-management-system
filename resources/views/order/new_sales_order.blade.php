@@ -152,7 +152,7 @@
             <tr>
               <th>Tax Amount</th>
               <td>
-                <input type="number" step="0.01" name="order[tax_amt]" id="tax_amt" class="form-control" onchange="calculateTotals()"/>
+                <input type="number" step="0.01" name="order[tax_amount]" id="tax_total" class="form-control" onchange="calculateTotals()"/>
               </td>
             </tr>
             <tr>
@@ -253,42 +253,22 @@
     else{
       toAdd = false;
     }
-    let row = `<tr class="item_row" data-row-num="${row_num}">
-        <td>
-          <input type="text" readonly name="order[items][${row_num}][item_name]" value="${item.item_name}" readonly class="form-control">
-          <input type="hidden" name="order[items][${row_num}][item_id]" value="${item.item_id}">
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_cost]" value="${item.item_cost}" step=".01" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_price]" value="${item.item_price}" step=".01" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_disc_per]" value="${item.item_disc_per}" step=".01" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_disc_amt]" value="${item.item_disc_amt}"  step=".01" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_rate]" value="${item.item_rate}" step=".01" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_tax_rate]" value="${item.item_tax_rate}" step=".01" readonly class="form-control item_tax_rate_input"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][qty_on_hand]" value="${item.qty_on_hand}" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_qty]" value="${item.item_qty}" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_total]" value="${item.item_total}" step=".01" readonly class="form-control item_total_input"/>
-        </td>
-        <td>
-          <button type="button" class="btn btn-sm btn-primary" onclick="EditItem(this)"><i class="fa fa-edit"></i></button>
-        </td>
-      </tr>`;
+    let row = `@include('order.so_item_row', [
+                  'item' => [
+                    'id'        => '${row_num}',
+                    'item_name' => '${item.item_name}',
+                    'item_id' => '${item.item_id}',
+                    'item_cost' => '${item.item_cost}',
+                    'item_price' => '${item.item_price}',
+                    'item_disc_per' => '${item.item_disc_per}',
+                    'item_disc_amt' => '${item.item_disc_amt}',
+                    'item_rate' => '${item.item_rate}',
+                    'tax_rate' => '${item.item_tax_rate}',
+                    'item_qty_on_hand' => '${item.qty_on_hand}',
+                    'item_qty' => '${item.item_qty}',
+                    'item_total' => '${item.item_total}',
+                  ]
+                ])`;
       if(toAdd)
         $('#item-list').append(row);
       else
@@ -327,17 +307,20 @@
   }
 
   function calculateTotals(){
-    let $sub_total = $('#sub_total'), sub_total = 0;
-    
+    let $sub_total = $('#sub_total'), sub_total = 0, taxTotal = 0,
+        $taxTotal = $('#tax_total')
     $('.item_total_input').each(function(){
-      sub_total += parseFloat($(this).val());
+      let thisTotal = parseFloat($(this).val());
+      sub_total += thisTotal;
+      let taxRate = parseFloat($(this).closest('tr').find('.tax_rate_input').val() || 0);
+      taxTotal += (thisTotal * taxRate * 0.01);
     });
-
+    $taxTotal.val(taxTotal);
     $sub_total.val(sub_total);
     let freight     = parseFloat(($('#freight').val() || 0));
     let other_costs  = parseFloat(($('#other_costs').val() || 0));
 
-    $('#order_total').val(freight + other_costs + sub_total);
+    $('#order_total').val(freight + other_costs + sub_total + taxTotal);
   }
 
   async function getItemById(item_id) {

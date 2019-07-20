@@ -23,7 +23,10 @@ class SalesOrderController extends Controller
     }
 
     public function viewSalesOrders(Request $req) {
-    	$orders = SalesOrder::orderBy('id', 'DESC')->join('customers', 'customers.id', '=', 'sales_orders.customer_id')->select('sales_orders.*', 'customers.name As customer')->get();
+    	$orders = SalesOrder::orderBy('id', 'DESC')
+                    ->join('customers', 'customers.id', '=', 'sales_orders.customer_id')
+                    ->select('sales_orders.*', 'customers.name As customer')
+                    ->get();
     	return view('order.view_sales_orders', compact('orders'));
     }
 
@@ -32,8 +35,8 @@ class SalesOrderController extends Controller
     	$so_items = SalesOrderItemDetail::getOrderItems($order_id);
     	$items = Item::where('status', 1)->select('id', 'item_name')->get();
     	$customers = Customer::select('id', 'name', 'discount')->get();
-        $statuses = SalesOrder::getStatuses();
-    	return view('order.edit_sales_order', compact('order', 'so_items', 'items', 'customers', 'statuses'));
+        // $statuses = SalesOrder::getStatuses();
+    	return view('order.edit_sales_order', compact('order', 'so_items', 'items', 'customers'/*, 'statuses'*/));
     }
 
     public function saveOrder(Request $req) {
@@ -57,7 +60,7 @@ class SalesOrderController extends Controller
     	$order->other_costs 	= ($req_order['other_costs'] ?? 0);
     	$order->order_total 	= ($req_order['order_total'] ?? 0);
         $order->memo            = $req_order['memo'];
-    	$order->status 			= $req_order['status'];
+    	// $order->status 			= $req_order['status'];
     	$order->save();
     	$order->sales_order_no 	= 'SO-'.str_pad($order->id, 7, "0", STR_PAD_LEFT);
     	$order->save();
@@ -78,7 +81,7 @@ class SalesOrderController extends Controller
     public function getOrderDetail($order_id) {
         $order = SalesOrder::find($order_id);
         $order->customer_name = Customer::getNameById($order->customer_id);
-        $order->Items = $order->getItemsWithNames();
+        $order->Items = $order->getItemsWithDetails();
         return response()->json($order);
     }
 }

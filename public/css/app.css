@@ -9,6 +9,18 @@
   
 th { font-size: 12px; text-align: center; }
 td { font-size: 11px; }
+
+.container-fluid input, .container-fluid label{
+	font-size: 12px;
+}
+
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+input[type="number"] {
+	-moz-appearance: textfield;
+}
 /*!
  * Bootstrap v4.1.3 (https://getbootstrap.com/)
  * Copyright 2011-2018 The Bootstrap Authors

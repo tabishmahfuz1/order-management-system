@@ -11,7 +11,7 @@
   </div>
   <div class="card-body">
     <div class="table-responsive">
-      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+      <table class="table table-bordered table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
         <thead>
           <tr>
             <th>Fulfilment Number</th>
@@ -46,7 +46,7 @@
                 <td>{{ $fulfilment->order_date }}</td>
                 <td>{{ $fulfilment->customer_name }}</td>
                 <td>{{ $fulfilment->ref_no }}</td>
-                <td class="text-center">{{ $fulfilment->status == 1 ? "Active" : "Disabled" }}</td>
+                <td class="text-center">{{ $fulfilment->status == 1 ? "Active" : "N.A." }}</td>
                 <td class="text-center"><a href="{{ route('edit_fulfilment', [ $fulfilment->id ]) }}"><i class="fa fa-edit"></i></a></td>
               </tr>
             @endforeach

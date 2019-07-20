@@ -11,7 +11,7 @@
   </div>
   <div class="card-body">
     <div class="table-responsive">
-      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+      <table class="table table-bordered table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
         <thead>
           <tr>
             <th>Sales Order Number</th>
@@ -43,7 +43,7 @@
                 <td>{{ $order->customer }}</td>
                 <td>{{ $order->ref_no }}</td>
                 <td class="text-right">{{ $order->order_total }}</td>
-                <td class="text-center">{{ $order->status == 1 ? "Active" : "Disabled" }}</td>
+                <td class="text-center">{{ $order->getStatus() }}</td>
                 <td class="text-center"><a href="{{ route('edit_sales_order', [ $order->id ]) }}"><i class="fa fa-edit"></i></a></td>
               </tr>
             @endforeach

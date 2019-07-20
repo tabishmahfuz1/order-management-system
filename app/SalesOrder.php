@@ -8,8 +8,9 @@ class SalesOrder extends Model
 {
     //
 
-    public const FULFILLED           = 'FULFILLED';
-    public const PARTIALLY_FULFILLED = 'PARTIALLY_FULFILLED';
+    public const DELIVERED           = 3;
+    public const FULFILLED           = 2;
+    public const PARTIALLY_FULFILLED = 1;
 
 	public function Items() {
 		return $this->hasMany('App\SalesOrderItemDetail', 'sales_order_id');
@@ -44,6 +45,7 @@ class SalesOrder extends Model
             $item->item_disc_per    = $r_item['item_disc_per'];
             $item->item_disc_amt = $r_item['item_disc_amt'];
             $item->item_rate        = $r_item['item_rate'];
+            $item->tax_rate        = $r_item['tax_rate'];
     		$item->item_qty_on_hand = $r_item['qty_on_hand'] ?? 0;
             $item->item_qty         = $r_item['item_qty'];
             if(isset($r_item['balance_qty']))
@@ -55,15 +57,36 @@ class SalesOrder extends Model
     	return $item;
     }
 
-    public function getItemsWithNames() {
+    public function getItemsWithDetails() {
         return SalesOrderItemDetail::where('sales_order_id', $this->id)
                 ->join('items', 'items.id', '=', 'sales_order_item_details.item_id')
-                ->select('sales_order_item_details.*', 'items.item_name')
+                ->select('sales_order_item_details.*', 'items.item_name', 'items.qty_on_hand')
                 ->get();
     }
 
-    public function setStatus($status) {
-        $this->status = StatusModel::getStatusIdByCode($status);
+    public function getStatus() {
+        if($this->is_cancelled) {
+            return "Cancelled";
+        } else if($this->is_paid) {
+            return "Paid and Closed";
+        } else if($this->is_invoiced) {
+            return "Invoiced";
+        } else {
+            switch($this->fulfilment_status) {
+                case 3:
+                    return "Delivered";
+                case 2:
+                    return "Fulfilled";
+                case 1:
+                    return "Partially Fulfilled";
+                default:
+                    return "Order Entered";
+            }
+        }
+    }
+
+    public function setFulfilmentStatus($status) {
+        $this->fulfilment_status = $status;
         return $this;
     }
 

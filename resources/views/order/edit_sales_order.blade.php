@@ -7,13 +7,24 @@
 
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <!-- <h1 class="h3 mb-0 text-gray-800">New Item</h1> -->
-    <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
   </div>
   <div class="card shadow-sm">
   <div class="card-header with-border">
-    <h6 class="m-0 font-weight-bold text-primary">Edit {{ $module_name ?? "Sales Order" }}</h6>
-
+    <div class="row">
+      <div class="col-md-6">      
+        <h6 class="m-0 font-weight-bold text-primary">Edit {{ $module_name ?? "Sales Order" }}</h6>
+      </div>
+      <div class="col-sm-6 box-tools text-right">
+        @if(!$order->isCompletelyFulfilled())
+        <a type="button" 
+                class="btn btn-sm btn-success btn-box-tool" 
+                target="blank"
+                href="{{ route('new_fulfilment', ['order_id' => $order->id]) }}">
+              Fulfilment</a>
+        @endif
+      </div>  
+    </div>
+    
     <!-- <div class="box-tools pull-right">
       <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
     </div> -->
@@ -58,16 +69,19 @@
         <div class="col">
           <div class="form-group">
             <label class="control-label">Order Status</label>
-            <select type="text" name="order[status]" class="form-control form-control-sm" id="order_status">
-              <!-- <option value="NEW_ORDER">New Order</option>
+            <!-- <select type="text" name="order[status]" class="form-control form-control-sm" id="order_status">
+              <option value="NEW_ORDER">New Order</option>
               <option value="IN_PROCESS">In Process</option>
               <option value="DISPATCHED">Dispatched</option>
               <option value="DELIVERED">Delivered</option>
-              <option value="CLOSED">Closed</option> -->
-              @foreach($statuses as $status)
-                <option value="{{ $status->id }}">{{ $status->name }}</option>
-              @endforeach
-            </select>
+              <option value="CLOSED">Closed</option>
+              @ foreach($statuses as $status)
+                <option value="{ { $status->id } }">{ { $status->name } }</option>
+              @ endforeach
+            </select> -->
+            <input class="form-control form-control-sm" 
+                    value="{{ $order->getStatus() }}" 
+                    disabled="" />
           </div>
         </div>
         <!-- <div class="col-md-4">
@@ -117,23 +131,23 @@
                 </td>
                 <td>
                   <div class="form-group">
-                    <input type="number" name="new_item_cost" step=".01" id="new_item_cost" readonly class="form-control item_cost_input"/>
+                    <input type="number" name="new_item_cost" step=".01" id="new_item_cost" readonly class="form-control item_cost_input text-right"/>
                     <span class="form-text"></span>
                   </div>
                 </td>
                 <td>
                   <div class="form-group">
-                    <input type="number" name="new_item_price" step=".01" id="new_item_price" readonly class="form-control calculation_input item_price_input"/>
+                    <input type="number" name="new_item_price" step=".01" id="new_item_price" readonly class="form-control calculation_input item_price_input text-right"/>
                     <span class="form-text"></span>
                   </div>
                 </td>
-                <td><input type="number" name="new_item_disc_per" step=".01" id="new_item_discount" class="form-control calculation_input item_disc_per_input"/></td>
-                <td><input type="number" name="new_item_disc_amt" step=".01" id="new_item_discount_amount" readonly class="form-control calculation_input item_disc_amt_input"/></td>
-                <td><input type="number" name="new_item_rate" step=".01" id="new_item_rate" class="form-control calculation_input item_rate_input"/></td>
-                <td><input type="number" name="new_item_tax_rate" step=".01" id="new_item_tax_rate" class="form-control calculation_input new_item_tax_rate_input"/></td>
+                <td><input type="number" name="new_item_disc_per" step=".01" id="new_item_discount" class="form-control calculation_input item_disc_per_input text-right"/></td>
+                <td><input type="number" name="new_item_disc_amt" step=".01" id="new_item_discount_amount" readonly class="form-control calculation_input item_disc_amt_input text-right"/></td>
+                <td><input type="number" name="new_item_rate" step=".01" id="new_item_rate" class="form-control calculation_input item_rate_input text-right"/></td>
+                <td><input type="number" name="new_item_tax_rate" step=".01" id="new_item_tax_rate" class="form-control calculation_input new_item_tax_rate_input text-right"/></td>
                 <td><input type="number" name="new_qty_on_hand" id="new_item_qty_on_hand" readonly class="form-control item_qty_on_hand_input"/></td>
                 <td><input type="number" name="new_item_qty" id="new_item_quantity" class="form-control calculation_input item_qty_input"/></td>
-                <td><input type="number" name="new_item_total" step=".01" id="new_item_total" readonly class="form-control item_total_input"/></td>
+                <td><input type="number" name="new_item_total" step=".01" id="new_item_total" readonly class="form-control item_total_input text-right"/></td>
                 <td><button type="button" class="btn btn-sm btn-primary" onclick="AddItem()">Add</button></td>
               </tr>
           </tbody>
@@ -146,32 +160,38 @@
                 <textarea name="order[memo]" class="form-control" placeholder="Memo">{{ $order->memo }}</textarea> 
               </td>
               <th>Sub Total</th>
-              <td><input type="text" name="order[sub_total]" id="sub_total" readonly value="{{ $order->sub_total }}" class="form-control"/></td>
+              <td><input type="text" name="order[sub_total]" id="sub_total" readonly value="{{ $order->sub_total }}" class="form-control text-right"/></td>
               <td></td>
             </tr>
             <tr>
               <th>Discount <input type="text" name="order[discount_percent]" id="discount_percent" class="form-control form-control-sm" value="{{ $order->discount_percent }}" /></th>
-              <td><input type="text" name="order[discount_amount]" id="discount_amount" value="{{ $order->discount_amount }}" readonly class="form-control"/></td>
+              <td><input type="text" name="order[discount_amount]" id="discount_amount" value="{{ $order->discount_amount }}" readonly class="form-control text-right"/></td>
               <td></td>
             </tr>
             <tr>
               <th>Freight</th>
               <td>
-                <input type="number" step="0.01" name="order[freight]" id="freight" value="{{ $order->freight }}" class="form-control" onchange="calculateTotals()" />
+                <input type="number" step="0.01" name="order[freight]" id="freight" value="{{ $order->freight }}" class="form-control text-right" onchange="calculateTotals()" />
               </td>
               <td></td>
             </tr>
             <tr>
               <th>Other Cost</th>
               <td>
-                <input type="number" step="0.01" name="order[other_costs]" id="other_costs"value="{{ $order->other_costs }}" class="form-control" onchange="calculateTotals()" />
+                <input type="number" step="0.01" name="order[other_costs]" id="other_costs" value="{{ $order->other_costs }}" class="form-control text-right" onchange="calculateTotals()" />
               </td>
               <td></td>
             </tr>
             <tr>
+              <th>Tax Amount</th>
+              <td>
+                <input type="number" step="0.01" name="order[tax_amount]" id="tax_total" value="{{ $order->tax_amount }}" class="form-control text-right" onchange="calculateTotals()"readonly />
+              </td>
+            </tr>
+            <tr>
               <th>Order Total</th>
               <td>
-                <input type="number" step="0.01" name="order[order_total]" id="order_total" class="form-control" value="{{ $order->order_total }}" readonly />
+                <input type="number" step="0.01" name="order[order_total]" id="order_total" class="form-control text-right" value="{{ $order->order_total }}" readonly />
               </td>
               <td></td>
             </tr>
@@ -197,7 +217,7 @@
 <script src="{{asset('custom-libraries/select2/dist/js/select2.full.min.js')}}"></script>
 
 <script type="text/javascript">
-  var menu_id = "view_sales_order";
+  var menu_id = "view_sales_orders";
   $('#customer-select').val('{{ $order->customer_id }}');
   $(function(){
     $('.select2').select2();
@@ -270,39 +290,23 @@
     else{
       toAdd = false;
     }
-    let row = `<tr class="item_row" data-row-num="${row_num}">
-        <td>
-          <input type="text" readonly name="order[items][${row_num}][item_name]" value="${item.item_name}" readonly class="form-control">
-          <input type="hidden" name="order[items][${row_num}][item_id]" value="${item.item_id}">
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_cost]" value="${item.item_cost}" step=".01" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_price]" value="${item.item_price}" step=".01" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_disc_per]" value="${item.item_disc_per}" step=".01" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_disc_amt]" value="${item.item_disc_amt}"  step=".01" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_rate]" value="${item.item_rate}" step=".01" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][qty_on_hand]" value="${item.qty_on_hand}" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_qty]" value="${item.item_qty}" readonly class="form-control"/>
-        </td>
-        <td>
-          <input type="number" name="order[items][${row_num}][item_total]" value="${item.item_total}" step=".01" readonly class="form-control item_total_input"/>
-        </td>
-        <td>
-          <button type="button" class="btn btn-sm btn-primary" onclick="EditItem(this)"><i class="fa fa-edit"></i></button>
-        </td>
-      </tr>`;
+
+    let row = `@include('order.so_item_row', [
+                  'item' => [
+                    'id'        => $order->id,
+                    'item_name' => '${item.item_name}',
+                    'item_id' => '${item.item_id}',
+                    'item_cost' => '${item.item_cost}',
+                    'item_price' => '${item.item_price}',
+                    'item_disc_per' => '${item.item_disc_per}',
+                    'item_disc_amt' => '${item.item_disc_amt}',
+                    'item_rate' => '${item.item_rate}',
+                    'tax_rate' => '${item.item_tax_rate}',
+                    'item_qty_on_hand' => '${item.qty_on_hand}',
+                    'item_qty' => '${item.item_qty}',
+                    'item_total' => '${item.item_total}',
+                  ]
+                ])`;
       if(toAdd)
         $('#item-list').append(row);
       else
@@ -343,6 +347,7 @@
         item_disc_per= $thisTr.find('.item_disc_per_input').val()
         item_disc_amt= $thisTr.find('.item_disc_amt_input').val(),
         item_rate= $thisTr.find('.item_rate_input').val(),
+        tax_rate= $thisTr.find('.tax_rate_input').val(),
         item_qty_on_hand= $thisTr.find('.qty_on_hand_input').val(),
         item_qty= $thisTr.find('.item_qty_input').val(),
         item_total= $thisTr.find('.item_total_input').val();
@@ -376,6 +381,7 @@
       item_disc_per,
       item_disc_amt,
       item_rate,
+      tax_rate,
       item_qty_on_hand,
       item_qty,
       item_total
@@ -441,17 +447,20 @@
   }*/
 
   function calculateTotals(){
-    let $sub_total = $('#sub_total'), sub_total = 0;
-    
+    let $sub_total = $('#sub_total'), sub_total = 0, taxTotal = 0,
+        $taxTotal = $('#tax_total')
     $('.item_total_input:not(#new_item_total)').each(function(){
-      sub_total += parseFloat($(this).val());
+      let thisTotal = parseFloat($(this).val());
+      sub_total += thisTotal;
+      let taxRate = parseFloat($(this).closest('tr').find('.tax_rate_input').val() || 0);
+      taxTotal += (thisTotal * taxRate * 0.01);
     });
-
+    $taxTotal.val(taxTotal);
     $sub_total.val(sub_total);
     let freight     = parseFloat(($('#freight').val() || 0));
     let other_costs  = parseFloat(($('#other_costs').val() || 0));
 
-    $('#order_total').val(freight + other_costs + sub_total);
+    $('#order_total').val(freight + other_costs + sub_total + taxTotal);
   }
 
   async function getItemById(item_id) {

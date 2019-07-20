@@ -72,7 +72,7 @@
 <script src="{{asset('custom-libraries/select2/dist/js/select2.full.min.js')}}"></script>
 
 <script type="text/javascript">
-  $('select[name=state]').val('{{ $customer->state }}');
+  $('select[name=state]').val('{{ $customer->state_id }}');
   var menu_id = "view_customers";
 
 
