@@ -12,7 +12,7 @@
   </div>
   <div class="card shadow-sm">
   <div class="card-header with-border">
-    <h6 class="m-0 font-weight-bold text-primary">Edit {{ $fulfilment_module_name ?? "Fulfilment" }}</h6>
+    <h6 class="m-0 font-weight-bold text-primary">New {{ $fulfilment_module_name ?? "Invoice" }}</h6>
 
     <!-- <div class="box-tools pull-right">
       <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -29,17 +29,23 @@
               name="order[id]" 
               value="">
       <input type="hidden" 
-              name="fulfilment[fulfilment_id]" 
-              value="{{ $fulfilment->id }}">
+              objName="fulfilment" 
+              data-objProp="id" 
+              name="fulfilment[id]" 
+              value="">
       <div class="row">
         <div class="col">
           <div class="form-group">
             <label class="control-label">Sales Order Number</label>
-            <input type="text" 
-                    name="fulfilment[so_id]"
-                    class="form-control form-control-sm"
-                    disabled="" 
-                    value="{{ $fulfilment->Order->sales_order_no }}" />
+            <select class="select2 form-control-sm form-control" 
+                    name="invoice[so_id]" 
+                    id="sales_order_select"
+                    onchange="getOrderDetails(this)">
+              <option value="">Select Sales Order</option>
+              @foreach($orders as $order)
+                <option value="{{ $order->id }}">{{ $order->sales_order_no }}</option>
+              @endforeach
+            </select>
           </div>
         </div>
         <div class="col">
@@ -50,7 +56,7 @@
                     data-objProp="order_date" 
                     name="order[order_date]" 
                     class="form-control form-control-sm datepicker" 
-                    value="{{ $fulfilment->Order->order_date }}" 
+                    value="" 
                     id="order_date" 
                     disabled />
           </div>
@@ -62,7 +68,7 @@
                     objName="order" 
                     data-objProp="customer_name" 
                     name="order[customer_name]" 
-                    value="{{ $fulfilment->Order->CustomerName() }}" 
+                    value="" 
                     id="customer_name" 
                     class="form-control-sm form-control" disabled />
           </div>
@@ -75,52 +81,45 @@
                     data-objProp="ref_no" 
                     name="order[ref_no]" 
                     id="order_ref_no" 
-                    value="{{ $fulfilment->Order->ref_no }}" 
+                    value="" 
                     class="form-control form-control-sm" 
                     disabled/>
           </div>
         </div>
       </div>
-      <div class="row"> 
-        <div class="col">
-          <div class="form-group">
-            <label class="control-label">Fulfilment Number</label>
-            <input type="text" 
-                    name="fulfilment_no" 
-                    class="form-control-sm form-control" 
-                    value="{{ $fulfilment->fulfilment_no }}" 
-                    disabled />
-          </div>
-        </div>
-        <div class="col">
-          <div class="form-group">
-            <label class="control-label">Fulfilment Date</label>
-            <input type="text" 
-                    name="fulfilment[fulfilment_date]" 
-                    id="fulfilment_date" 
-                    class="form-control-sm form-control datepicker" 
-                    value="{{ $fulfilment->fulfilment_date }}" />
-          </div>
-        </div>
-        <div class="col"> </div>
-        <div class="col"> </div>
-      </div>  
-      <div class="row">
-        <div class="col-md-8">  
-            @include('fulfilment.item_detail', [ 'items' => $fulfilment->FullItemDetails() ])
-        </div>
-
-        <div class="col-md-4">
-          <textarea name="order[memo]" 
+      <div class="row mb-2">
+        <textarea name="order[memo]" 
                 id="order_memo" 
                 objName="order" 
                 data-objProp="memo" 
                 class="form-control" 
-                placeholder="Memo" disabled="">{{ $fulfilment->Order->memo }}</textarea> 
-        </div>
+                placeholder="Memo" disabled=""></textarea> 
       </div>
-
-      <div class="row">
+      <div class="row border border-secondar rounded-top">
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a role="tab" class="nav-link active" aria-controls="fulfilments_tab" data-toggle="tab" href="#fulfilments_tab">Fulfilments</a>
+          </li>
+          <li class="nav-item">
+            <a role="tab" class="nav-link" data-toggle="tab" href="#other_cost_tab">Freight &amp; Other Costs</a>
+          </li>
+          <li class="nav-item">
+            <a role="tab" class="nav-link" data-toggle="tab" href="#preview_invoice_tab">Preview Invoice</a>
+          </li>
+        </ul>
+        <div class="container-fluid border">
+          <div class="tab-content mt-1"> 
+            <div id="fulfilments_tab" class="tab-pane fade show active col-md-10" role="tabpanel">
+              @include('invoice.fulfilment_lines')
+            </div>
+            <div id="other_cost_tab" class="tab-pane" role="tabpanel">
+              
+            </div>
+            <div id="preview_invoice_tab" class="tab-pane" role="tabpanel">
+              
+            </div>
+          </div>
+        </div>
       </div>
       
       <div class="text-center">
@@ -141,40 +140,43 @@
 <script src="{{asset('custom-libraries/select2/dist/js/select2.full.min.js')}}"></script>
 
 <script type="text/javascript">
-  var menu_id = "view_fulfilments";
+  var menu_id = "new_invoice";
   $(function(){
     $('.select2').select2();
     $('#fulfilment_date').datepicker({
       format: 'yyyy-mm-dd',
     }).datepicker('setDate', 'today');
+    @isset($order_id)
+      $('#sales_order_select').val('{{ $order_id }}');
+      $('#sales_order_select').change();
+    @endisset
   });
 
   async function getOrderDetails(thisSelect) {
     let orderId = $(thisSelect).val();
-    $.get('{{ route("get_order_detail_for_fulfilment") }}/' + orderId, (data) => {
+    $.get('{{ route("get_order_detail_for_invoice") }}/' + orderId, (data) => {
       // console.log(data);
       updateOrder(data);
-      renderItems(data.Items);
+      renderFulfilments(data.Fulfilments);
     });
   }
 
-  function renderItems(items) {
-    let itemsHtml = items.reduce((acc, item) => {
-      return acc += createItemRow(item);
+  function renderFulfilments(fulfilments) {
+    let fulfilmentsHtml = fulfilments.reduce((acc, fulfilment) => {
+      return acc += createFulfilmentRow(fulfilment);
     },``);
 
-    $('#item-list').html(itemsHtml);
+    $('#fulfilments-list').html(fulfilmentsHtml);
   }
 
-  function createItemRow(item) {
-    return `@include('fulfilment.item_row', 
-                ["item" => 
+  function createFulfilmentRow(fulfilment) {
+    return `@include('invoice.fulfilment_row', 
+                ["fulfilment" => 
                   [
-                    'so_item_id' => '${item.id}', 
-                    'item_name' => '${item.item_name}',  
-                    'item_rate' => '${item.item_rate}', 
-                    'item_qty' => '${item.item_qty}', 
-                    'balance_qty' => '${item.balance_qty}'
+                    'id' => '${fulfilment.id}', 
+                    'fulfilment_no' => '${fulfilment.fulfilment_no}', 
+                    'fulfilment_date' => '${fulfilment.fulfilment_date}',  
+                    'fulfilment_amt' => '${fulfilment.fulfilment_amt}'
                   ]
                 ])`;
   }
@@ -190,6 +192,53 @@
         e.value = updateOrder.Order[e.dataset.objprop];
       }
     }
+  }
+
+  async function getItems(thisBtn) {
+    let $thisTr = $(thisBtn).closest('tr'),
+        thisFulfilmentId = $thisTr.data('fulfilment_id');
+    if($(thisBtn).find('i').hasClass('fa-minus')) {
+      $(thisBtn).find('i').toggleClass('fa-plus fa-minus');
+    }
+    $('#fulfilments-list tr[items_for]').hide();
+    if($(thisBtn).find('i').hasClass('fa-minus')) {
+      $(thisBtn).find('i').toggleClass('fa-plus fa-minus');
+    }
+    if($('#fulfilments-list tr[items_for='+ thisFulfilmentId +']').length > 0){
+      $('#fulfilments-list tr[items_for='+ thisFulfilmentId +']').show();
+      $(thisBtn).find('i').toggleClass('fa-plus fa-minus');
+      return true;
+    }
+    try{
+      let items = await $.get('{{ route("get_fulfilment_items") }}/' + thisFulfilmentId),
+          header= `<tr><th>Item Name</th><th>Selling Price</th><th>Discount</th>
+                    <th>Item Rate</th><th>Fulfilment Qty.</th><th>Item Total</th></tr>`;
+      $thisTr.after(`<tr items_for="${thisFulfilmentId}"><td colspan="4"><table class="col-md-10 m-auto">${header}${reduceItemsToTable(items)}</table></td></tr>`);
+      $('#fulfilments-list tr[items_for='+ thisFulfilmentId +']').show();
+      $(thisBtn).find('i').toggleClass('fa-plus fa-minus');
+    } catch(err) {
+      console.error('Couldn\'t fetch items', err);
+    }
+    
+  }
+
+  function reduceItemsToTable(items) {
+    console.log(items);
+    return items.reduce((acc, item) => {
+      return acc += createFulfilledItemRow(item);
+    },``);
+
+  }
+
+  function createFulfilledItemRow(item) {
+    return `<tr>
+      <td>${item.item_name}</td>
+      <td>${item.item_price}</td>
+      <td>${item.item_disc_amt}</td>
+      <td>${item.item_rate}</td>
+      <td>${item.fulfilment_qty}</td>
+      <td>${parseFloat(item.item_rate) * parseInt(item.fulfilment_qty)}</td>
+    </tr>`;
   }
   
   function validateFulfilQty(thisInput) {

@@ -20,6 +20,11 @@ class FulfilmentItem extends Model
     	return $this;
     }
 
+    public function setRemainingQty(int $qty) {
+        $this->remaining_qty = $qty;
+        return $this;
+    }
+
     public static function saveItem($item) {
     	$response = [];
     	if(!empty($item['fulfilment_item_id'])){

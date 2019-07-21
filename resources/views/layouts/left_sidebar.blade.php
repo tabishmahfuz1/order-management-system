@@ -1,4 +1,5 @@
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar"
+    style="height: 100vh;overflow-y: auto;width: 18rem !important">
 
   <!-- Sidebar - Brand -->
   <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url('/home') }}">
@@ -64,8 +65,30 @@
         <h6 class="collapse-header">Sales Order:</h6>
         <a id="menu_new_sales_order" class="collapse-item" href="{{ route('new_sales_order') }}">New Order</a>
         <a id="menu_view_sales_orders" class="collapse-item" href="{{ route('view_sales_orders') }}">View Orders</a>
+      </div>
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">Fulfilment:</h6>
         <a id="menu_new_fulfilment" class="collapse-item" href="{{ route('new_fulfilment') }}">New Fulfillment</a>
         <a id="menu_view_fulfilments" class="collapse-item" href="{{ route('view_fulfilments') }}">View Fulfillments</a>
+      </div>
+    </div>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFinancials" aria-expanded="true" aria-controls="collapseTwo">
+      <i class="fas fa-fw fa-table"></i>
+      <span>Financial</span>
+    </a>
+    <div id="collapseFinancials" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">Invoice:</h6>
+        <a id="menu_new_invoice" class="collapse-item" href="{{ route('new_invoice') }}">New Invoice</a>
+        <a id="menu_view_invoices" class="collapse-item" href="{{ route('view_sales_orders') }}">View Invoices</a>
+      </div>
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">Payment:</h6>
+        <a id="menu_new_payment" class="collapse-item" href="{{ route('new_fulfilment') }}">New Payment</a>
+        <a id="menu_view_payments" class="collapse-item" href="{{ route('view_fulfilments') }}">View Payments</a>
       </div>
     </div>
   </li>
@@ -101,9 +124,11 @@
 <script type="text/javascript">
   $(function(){
     if(menu_id){
-      $('#menu_' + menu_id).addClass('active');
-      $('#menu_' + menu_id).closest('div.collapse').addClass('show');
-      $('#menu_' + menu_id).closest('div.collapse').prev('a.nav-link').removeClass('collapsed');
+      let $menuLink = $('#menu_' + menu_id);
+      $menuLink.addClass('active');
+      $menuLink.closest('div.collapse').addClass('show');
+      $menuLink.closest('div.collapse').prev('a.nav-link').removeClass('collapsed');
+      document.title = $menuLink.text();
     }
   })
 </script>

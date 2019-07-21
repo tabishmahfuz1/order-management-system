@@ -10,7 +10,7 @@
 th { font-size: 12px; text-align: center; }
 td { font-size: 11px; }
 
-.container-fluid input, .container-fluid label{
+.container-fluid input, .container-fluid label, .container-fluid .select2, .container-fluid .select2-results__option{
 	font-size: 12px;
 }
 
@@ -20,6 +20,26 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 }
 input[type="number"] {
 	-moz-appearance: textfield;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }
 /*!
  * Bootstrap v4.1.3 (https://getbootstrap.com/)

@@ -75,7 +75,7 @@ class Fulfilment extends Model
                 continue;
     		$so_item 					= SalesOrderItemDetail::find($item['so_item_id']);
     		$item['item_id'] 			= $so_item->item_id;
-    		$item['balance_qty'] 		= $so_item->balance_qty;
+    		// $item['balance_qty'] 		= $so_item->balance_qty;
     		$item['remaining_qty'] 		= $so_item->balance_qty - $item['fulfilment_qty'];
     		$item['remaining_stock'] 	= $so_item->Item->qty_on_hand;
     		$item['fulfilment_id'] 		= $this->id;
@@ -90,7 +90,7 @@ class Fulfilment extends Model
     		if(!empty($fulfilment_item['old']))
     			$stock 					+= $fulfilment_item['old']['fulfilment_qty'];
     		$stock 						-= $fulfilment_item['new']['fulfilment_qty'];
-    		$fulfilment_item['new']->setRemainingStock($stock)->save();
+    		$fulfilment_item['new']->setRemainingStock($stock)->setRemainingQty($so_item->balance_qty)->save();
     		$so_item->Item->setQuantityOnHand($stock)->save();
     		$so_item->save();
     	}

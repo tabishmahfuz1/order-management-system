@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class SalesOrder extends Model
 {
@@ -16,6 +17,10 @@ class SalesOrder extends Model
 		return $this->hasMany('App\SalesOrderItemDetail', 'sales_order_id');
 	}
 
+    public function Fulfilments() {
+        return $this->hasMany(Fulfilment::class, 'so_id');
+    }
+
     public function Customer() {
         return $this->belongsTo(Customer::class, 'customer_id');
     }
@@ -28,6 +33,15 @@ class SalesOrder extends Model
         return !(SalesOrderItemDetail::where('sales_order_id', $this->id)
                 ->where('balance_qty', '>', 0)
                 ->exists());
+    }
+
+    public function FulfilmentsWithAmount() {
+        return Fulfilment::where('so_id', $this->id)
+                    ->join('fulfilment_items', 'fulfilment_items.fulfilment_id', '=', 'fulfilments.id')
+                    ->join('sales_order_item_details', 'sales_order_item_details.id', '=', 'fulfilment_items.so_item_id')
+                    ->groupBy('fulfilments.id')
+                    ->select('fulfilments.*', DB::Raw('SUM(sales_order_item_details.item_rate * fulfilment_items.fulfilment_qty) As fulfilment_amt'))
+                    ->get();
     }
 
     public function addItems(array $items) {
@@ -93,5 +107,22 @@ class SalesOrder extends Model
     // ************************  Static Functions ***************************
     public static function getStatuses() {
         return StatusModel::where('module', 'SO')->get();
+    }
+
+    public static function getMonthSales() {
+        return self::where(DB::Raw('YEAR(order_date)'), date('Y'))
+                    ->where(DB::Raw('MONTH(order_date)'), date('m'))
+                    ->sum('order_total') ?? 0;
+    }
+
+    public static function getYearSales() {
+        return self::where(DB::Raw('YEAR(order_date)'), date('Y'))
+                    ->sum('order_total') ?? 0;
+    }
+
+    public static function getPendingOrdersCount() {
+        return self::where(DB::Raw('IFNULL(is_cancelled, 0)'), 0)
+                    ->where(DB::Raw('IFNULL(fulfilment_status, 0)'), '<', 2)
+                    ->count() ?? 0;
     }
 }

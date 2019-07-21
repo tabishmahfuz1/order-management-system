@@ -148,10 +148,10 @@
     $('#fulfilment_date').datepicker({
       format: 'yyyy-mm-dd',
     }).datepicker('setDate', 'today');
-    @isset($order_id)
+    @if(!empty($order_id))
       $('#sales_order_select').val('{{ $order_id }}');
       $('#sales_order_select').change();
-    @endisset
+    @endif
   });
 
   async function getOrderDetails(thisSelect) {

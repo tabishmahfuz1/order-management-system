@@ -55,3 +55,9 @@ Route::prefix('fulfilment')->group(function(){
 	Route::get('view_fulfilments', 'FulfilmentController@viewFulfilments')->name('view_fulfilments');
 });
 
+Route::prefix('invoice')->group(function(){
+	Route::get('new_invoice', 'InvoiceController@newInvoice')->name('new_invoice');
+	Route::get('get_order_detail/{order_id?}', 'InvoiceController@getOrderDetails')->name('get_order_detail_for_invoice');
+	Route::get('get_fulfilment_items/{fulfilment_id?}', 'InvoiceController@getFulfilmentItems')->name('get_fulfilment_items');
+});
+

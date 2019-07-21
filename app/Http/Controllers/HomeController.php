@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\SalesOrder;
 
 class HomeController extends Controller
 {
@@ -23,6 +24,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $dashboard_data = []; 
+        $dashboard_data['monthSales']   = SalesOrder::getMonthSales();
+        $dashboard_data['yearSales']    = SalesOrder::getYearSales();
+        $dashboard_data['pendingOrders']    = SalesOrder::getPendingOrdersCount();
+        return view('home', $dashboard_data);
     }
 }

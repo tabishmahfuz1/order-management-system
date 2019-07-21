@@ -33,13 +33,13 @@
         <div class="col">
           <div class="form-group">
             <label class="control-label">Order Date</label>
-            <input type="text" name="order[order_date]" class="datepicker form-control form-control-sm" value="{{ date('Y-m-d') }}" />
+            <input type="text" required name="order[order_date]" class="datepicker form-control form-control-sm" value="{{ date('Y-m-d') }}" />
           </div>
         </div>
         <div class="col">
           <div class="form-group">
             <label class="control-label">{{ $customer_module_alias ?? "Distributor" }}</label>
-            <select name="order[customer_id]" class="select2 form-control form-control-sm">
+            <select name="order[customer_id]" required class="select2 form-control form-control-sm">
               <option value="">Select {{ $customer_module_alias ?? "Distributor" }}</option>
               @foreach($customers as $customer)
                 <option value="{{ $customer->id }}" data-discount="{{ $customer->discount }}" >{{ $customer->name }}</option>
@@ -335,13 +335,10 @@
     }
   }
   function validateForm() {
-    if($('input[name=name]').val().trim() !== '')
-      return true;
-    else {
-      $('input[name=name]').addClass('is-invalid');
+    if($('#item-list tr').length == 0) {
+      showDangerMsg("Please add atleast one Item");
       return false;
     }
-
   }
 </script>
 <!-- /.container-fluid -->
