@@ -109,11 +109,74 @@
         </ul>
         <div class="container-fluid border">
           <div class="tab-content mt-1"> 
-            <div id="fulfilments_tab" class="tab-pane fade show active col-md-10" role="tabpanel">
+            <div id="fulfilments_tab" class="tab-pane fade show active" role="tabpanel">
               @include('invoice.fulfilment_lines')
             </div>
             <div id="other_cost_tab" class="tab-pane" role="tabpanel">
-              
+              <table class="table table-sm">
+                <tr>
+                  <th></th>
+                  <th>Sales Order Total</th>
+                  <th>Already Charged</th>
+                  <th>Charge in this Invoice</th>
+                </tr>
+                <tr>
+                  <td>Freight</td>
+                  <td>
+                    <input type="number" 
+                            step=".01" 
+                            objName="order" 
+                            data-objProp="freight" 
+                            class="form-control-sm form-control" 
+                            name="order[freight]" 
+                            readonly="" />
+                  </td>
+                  <td>
+                    <input type="number" 
+                            step=".01" 
+                            class="form-control-sm form-control" 
+                            objName="order"
+                            data-objProp="claimed_freight"
+                            name="order[claimed_freight]" 
+                            readonly="" />
+                  </td>
+                  <td>
+                    <input type="number" 
+                            step=".01" 
+                            class="form-control-sm form-control" 
+                            name="invoice[freight]" 
+                            onchange="validateClaimedOtherCosts()" />
+                  </td>
+                </tr>
+                <tr>
+                  <td>Other Costs</td>
+                  <td>
+                    <input type="number" 
+                            step=".01" 
+                            class="form-control-sm form-control"
+                            objName="order"
+                            data-objProp="other_costs"
+                            name="order[other_costs]" 
+                            readonly="">
+                  </td>
+                  <td>
+                    <input type="number" 
+                            step=".01" 
+                            class="form-control-sm form-control"
+                            objName="order"
+                            data-objProp="claimed_other_costs"
+                            name="order[claimed_other_costs]" 
+                            readonly="">
+                  </td>
+                  <td>
+                    <input type="number" 
+                            step=".01" 
+                            class="form-control-sm form-control"
+                            name="invoice[other_costs]" 
+                            onchange="validateClaimedOtherCosts()" />
+                  </td>
+                </tr>
+              </table>
             </div>
             <div id="preview_invoice_tab" class="tab-pane" role="tabpanel">
               
@@ -210,10 +273,8 @@
       return true;
     }
     try{
-      let items = await $.get('{{ route("get_fulfilment_items") }}/' + thisFulfilmentId),
-          header= `<tr><th>Item Name</th><th>Selling Price</th><th>Discount</th>
-                    <th>Item Rate</th><th>Fulfilment Qty.</th><th>Item Total</th></tr>`;
-      $thisTr.after(`<tr items_for="${thisFulfilmentId}"><td colspan="4"><table class="col-md-10 m-auto">${header}${reduceItemsToTable(items)}</table></td></tr>`);
+      let items = await $.get('{{ route("get_fulfilment_items") }}/' + thisFulfilmentId);
+      $thisTr.after(`<tr items_for="${thisFulfilmentId}"><td colspan="4">${reduceItemsToTable(items)}</td></tr>`);
       $('#fulfilments-list tr[items_for='+ thisFulfilmentId +']').show();
       $(thisBtn).find('i').toggleClass('fa-plus fa-minus');
     } catch(err) {
@@ -223,22 +284,28 @@
   }
 
   function reduceItemsToTable(items) {
-    console.log(items);
-    return items.reduce((acc, item) => {
-      return acc += createFulfilledItemRow(item);
-    },``);
-
+    // console.log(items);
+    let header= `<tr><th>Item Name</th><th>Selling Price</th><th>Discount</th>
+                    <th>Item Rate</th><th>Fulfilment Qty.</th><th>Item Total</th></tr>`,
+        itemsHtml = items.reduce((acc, item) => {
+                      return acc += createFulfilledItemRow(item);
+                    },``);
+    return `<table class="col-md-10 m-auto">${header}${itemsHtml}</table>`;
   }
 
   function createFulfilledItemRow(item) {
     return `<tr>
       <td>${item.item_name}</td>
-      <td>${item.item_price}</td>
-      <td>${item.item_disc_amt}</td>
-      <td>${item.item_rate}</td>
-      <td>${item.fulfilment_qty}</td>
-      <td>${parseFloat(item.item_rate) * parseInt(item.fulfilment_qty)}</td>
+      <td class="text-right">${item.item_price}</td>
+      <td class="text-right">${item.item_disc_amt}</td>
+      <td class="text-right">${item.item_rate}</td>
+      <td class="text-center">${item.fulfilment_qty}</td>
+      <td class="text-right">${(parseFloat(item.item_rate) * parseInt(item.fulfilment_qty)).toFixed(2)}</td>
     </tr>`;
+  }
+
+  function validateClaimedOtherCosts() {
+    return true;
   }
   
   function validateFulfilQty(thisInput) {

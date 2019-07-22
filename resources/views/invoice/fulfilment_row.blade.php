@@ -7,8 +7,8 @@
 				class="checkbox fulfilment_checkbox" value="{{ $fulfilment['id'] }}" />
 	</td>
 	<td class="text-center">
-		<span class="btn btn-success btn-sm"
-				onclick="getItems(this, '{{ $fulfilment['id'] }}')"> <i class="fa fa-plus"></i>
+		<span class="btn-success btn-sm"
+				onclick="getItems(this, '{{ $fulfilment['id'] }}')"> <i class="fa fa-sm fa-plus"></i>
 		</span>
 	</td>
 </tr>

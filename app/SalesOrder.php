@@ -8,7 +8,8 @@ use DB;
 class SalesOrder extends Model
 {
     //
-
+    // public $claimed_freight;
+    // public $claimed_other_costs;
     public const DELIVERED           = 3;
     public const FULFILLED           = 2;
     public const PARTIALLY_FULFILLED = 1;
@@ -27,6 +28,18 @@ class SalesOrder extends Model
 
     public function CustomerName() {
         return Customer::getNameById($this->customer_id);
+    }
+
+    public function ClaimedOtherCosts() {
+        $this->claimed_freight = 0;
+        $this->claimed_other_costs = 0;
+        return $this->claimed_other_costs;
+    }
+
+    public function ClaimedFreight() {
+        $this->claimed_freight = 0;
+        $this->claimed_other_costs = 0;
+        return $this->claimed_freight;
     }
 
     public function isCompletelyFulfilled() {

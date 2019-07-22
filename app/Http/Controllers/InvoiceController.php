@@ -25,7 +25,9 @@ class InvoiceController extends Controller
     public function getOrderDetails($order_id) {
     	$order = SalesOrder::find($order_id);
     	$order->customer_name 	= Customer::getNameById($order->customer_id);
-        $order->Fulfilments 	= $order->FulfilmentsWithAmount(); 
+        $order->Fulfilments 	= $order->FulfilmentsWithAmount();
+        $order->claimed_freight = $order->ClaimedFreight();
+        $order->claimed_other_costs = $order->ClaimedOtherCosts();
         return response()->json($order);
     }
 
