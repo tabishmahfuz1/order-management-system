@@ -18,9 +18,25 @@
   <tfoot>
     <tr>
       <td class="text-right">Total:</td>
-      <td><input type="number" step=".01" name="invoice[sub_total]"></td>
-      <td><input type="number" step=".01" name="invoice[tax_amt]"></td>
-      <td><input type="number" step=".01" name="invoice[grandtotal]"></td>
+      <td><input class="form-control form-control-sm text-right" 
+      				id="inv_sub_total_input" 
+      				type="number" 
+      				step=".01" 
+      				name="invoice[sub_total]" 
+      				readonly /></td>
+      <td><input class="form-control form-control-sm text-right" 
+      				id="inv_tax_amt_input" 
+      				type="number" 
+      				step=".01" 
+      				name="invoice[tax_amt]" 
+      				readonly /></td>
+      <td><input class="form-control form-control-sm text-right" 
+      				id="inv_grandtotal_input" 
+      				type="number" 
+      				step=".01" 
+      				name="invoice[grandtotal]" 
+      				readonly /></td>
+      <td></td>
       <td></td>
     </tr>
   </tfoot>

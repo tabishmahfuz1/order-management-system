@@ -12,7 +12,7 @@
   </div>
   <div class="card shadow-sm">
   <div class="card-header with-border">
-    <h6 class="m-0 font-weight-bold text-primary">New {{ $fulfilment_module_name ?? "Invoice" }}</h6>
+    <h6 class="m-0 font-weight-bold text-primary">Edit {{ $fulfilment_module_name ?? "Invoice" }}</h6>
 
     <!-- <div class="box-tools pull-right">
       <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -40,15 +40,10 @@
         <div class="col">
           <div class="form-group">
             <label class="control-label">Sales Order Number</label>
-            <select class="select2 form-control-sm form-control" 
-                    name="invoice[so_id]" 
-                    id="sales_order_select"
-                    onchange="getOrderDetails(this)">
-              <option value="">Select Sales Order</option>
-              @foreach($orders as $order)
-                <option value="{{ $order->id }}">{{ $order->sales_order_no }}</option>
-              @endforeach
-            </select>
+            <input type="text" 
+                    name="invoice[so_num]" 
+                    class="form-control form-control-sm"
+                    disabled="" />
           </div>
         </div>
         <div class="col">
@@ -77,7 +72,7 @@
             <input type="hidden" 
                     objName="order" 
                     data-objProp="customer_id" 
-                    name="invoice[customer_id]" 
+                    name="order[customer_id]" 
                     value="" 
                     id="customer_id" 
                     class="form-control-sm form-control" />

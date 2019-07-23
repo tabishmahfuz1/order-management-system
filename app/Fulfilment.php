@@ -7,6 +7,9 @@ use DB;
 class Fulfilment extends Model
 {
     //
+    private $fulfilment_amt;
+    private $fulfilment_tax;
+    private $fulfilment_total;
     public function Items() {
     	return $this->hasMany(FulfilmentItem::class);
     }
@@ -23,6 +26,46 @@ class Fulfilment extends Model
                             DB::Raw('(items.qty_on_hand + fulfilment_items.fulfilment_qty) AS qty_on_hand'),
                             DB::Raw('(sales_order_item_details.balance_qty + fulfilment_items.fulfilment_qty) AS balance_qty'))
     					->get();
+    }
+
+    public function getFulfilmentTotalWithTax() {
+        if(!isset($this->fulfilment_total)) {
+            $this->CalculateFulfilmentAmount();
+        }
+        return $this->fulfilment_total;
+    }
+
+    public function getFulfilmentTax() {
+        if(!isset($this->fulfilment_tax)) {
+            $this->CalculateFulfilmentAmount();
+        }
+        return $this->fulfilment_tax;
+    }
+
+    public function getFulfilmentAmount() {
+        if(!isset($this->fulfilment_amt)) {
+            $this->CalculateFulfilmentAmount();
+        }
+        return $this->fulfilment_amt;
+    }
+
+    public function setAsInvoiced() {
+        $this->is_invoiced = 1;
+        return $this->save();
+    }
+
+    public function CalculateFulfilmentAmount() {
+        $a = FulfilmentItem::where('fulfilment_items.fulfilment_id', $this->id)
+                    ->join('sales_order_item_details AS soid', 'soid.id', '=', 'fulfilment_items.so_item_id')
+                    ->select(
+                        DB::Raw('ROUND(SUM(soid.item_rate * fulfilment_items.fulfilment_qty), 2) As fulfilment_amt'),
+                        DB::Raw('ROUND(SUM(soid.item_rate * soid.tax_rate *  fulfilment_items.fulfilment_qty * 0.01 ), 2) As fulfilment_tax'))
+                    ->first();
+        $a->fulfilment_total    = $a->fulfilment_amt + $a->fulfilment_tax;
+        $this->fulfilment_amt   = $a->fulfilment_amt;
+        $this->fulfilment_tax   = $a->fulfilment_tax;
+        $this->fulfilment_total = $a->fulfilment_total;
+        return $a;
     }
 
     public static function saveFulfilment($fulfilment) {

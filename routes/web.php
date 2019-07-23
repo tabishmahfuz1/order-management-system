@@ -61,5 +61,6 @@ Route::prefix('invoice')->group(function(){
 	Route::get('get_fulfilment_items/{fulfilment_id?}', 'InvoiceController@getFulfilmentItems')->name('get_fulfilment_items');
 
 	Route::post('save', 'InvoiceController@saveInvoice')->name('save_invoice');
+	Route::get('edit/{invoice_id}', 'InvoiceController@editInvoice')->name('edit_invoice');
 });
 

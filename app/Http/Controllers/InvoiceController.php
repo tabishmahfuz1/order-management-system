@@ -25,7 +25,14 @@ class InvoiceController extends Controller
     }
 
     public function saveInvoice(Request $req) {
-    	dd($req->all());
+    	// dd($req->all());
+    	$inv = Invoice::saveInvoice($req->invoice);
+    	return redirect()->route('edit_invoice', ['invoice_id' => $inv->id]);
+    }
+
+    public function editInvoice($invoice_id) {
+    	$invoice = Invoice::find($invoice_id);
+    	return view('invoice.edit_invoice', compact('invoice'));
     }
 
     public function getOrderDetails($order_id) {
