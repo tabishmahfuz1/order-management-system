@@ -15,6 +15,10 @@ class CreateInvoiceLinesTable extends Migration
     {
         Schema::create('invoice_lines', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('fulfilment_id');
+            $table->decimal('fulfilment_amt');
+            $table->decimal('tax_amt');
+            $table->bigInteger('invoice_id');
             $table->timestamps();
         });
     }

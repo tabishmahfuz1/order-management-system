@@ -4,6 +4,8 @@
       <th style="width: 40%;">Fulfilment No</th>
       <!-- <th>Fulfilment Date</th> -->
       <th>Fulfilment Amount</th>
+      <th>Tax</th>
+      <th>Fulfilment Total</th>
       <th>Action</th>
       <th>View Items</th>
     </tr>

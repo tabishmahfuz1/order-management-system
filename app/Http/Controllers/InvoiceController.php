@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use App\SalesOrder;
 use App\Customer;
+use App\Invoice;
 
 class InvoiceController extends Controller
 {
@@ -22,6 +24,10 @@ class InvoiceController extends Controller
     	return view('invoice.new_invoice', compact('orders'));
     }
 
+    public function saveInvoice(Request $req) {
+    	dd($req->all());
+    }
+
     public function getOrderDetails($order_id) {
     	$order = SalesOrder::find($order_id);
     	$order->customer_name 	= Customer::getNameById($order->customer_id);
@@ -35,7 +41,7 @@ class InvoiceController extends Controller
     	$items = \App\FulfilmentItem::where('fulfilment_id', $fulfilment_id)
     				->join('sales_order_item_details AS soid', 'soid.id', '=', 'fulfilment_items.so_item_id')
     				->join('items', 'items.id', '=', 'soid.item_id')
-    				->select('fulfilment_items.*', 'soid.item_price', 'soid.item_disc_amt', 'soid.item_rate', 'items.item_name')
+    				->select('fulfilment_items.*', 'soid.item_price', 'soid.item_disc_amt', 'soid.item_rate', 'soid.tax_rate', 'items.item_name')
     				->get();
     	return response()->json($items);
     }

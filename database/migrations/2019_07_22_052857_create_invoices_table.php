@@ -15,6 +15,16 @@ class CreateInvoicesTable extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('invoice_no');
+            $table->bigInteger('so_id');
+            $table->bigInteger('fulfilment_id');
+            $table->bigInteger('customer_id');
+            $table->decimal('subtotal', 10, 2);
+            $table->decimal('tax_amt', 10, 2)->default(0);
+            $table->decimal('freight', 10, 2)->default(0);
+            $table->decimal('other_costs', 10, 2)->default(0);
+            $table->decimal('grandtotal', 10, 2);
+            $table->decimal('balance_amt', 10, 2)->default(0);
             $table->timestamps();
         });
     }

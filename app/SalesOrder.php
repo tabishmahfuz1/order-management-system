@@ -51,10 +51,15 @@ class SalesOrder extends Model
     public function FulfilmentsWithAmount() {
         return Fulfilment::where('so_id', $this->id)
                     ->join('fulfilment_items', 'fulfilment_items.fulfilment_id', '=', 'fulfilments.id')
-                    ->join('sales_order_item_details', 'sales_order_item_details.id', '=', 'fulfilment_items.so_item_id')
+                    ->join('sales_order_item_details AS soid', 'soid.id', '=', 'fulfilment_items.so_item_id')
                     ->groupBy('fulfilments.id')
-                    ->select('fulfilments.*', DB::Raw('SUM(sales_order_item_details.item_rate * fulfilment_items.fulfilment_qty) As fulfilment_amt'))
-                    ->get();
+                    ->select('fulfilments.*', 
+                        DB::Raw('ROUND(SUM(soid.item_rate * fulfilment_items.fulfilment_qty), 2) As fulfilment_amt'),
+                        DB::Raw('ROUND(SUM(soid.item_rate * soid.tax_rate *  fulfilment_items.fulfilment_qty * 0.01 ), 2) As fulfilment_tax'))
+                    ->get()->map(function($a){
+                        $a->fulfilment_total = number_format($a->fulfilment_amt + $a->fulfilment_tax, 2);
+                        return $a;
+                    });
     }
 
     public function addItems(array $items) {
