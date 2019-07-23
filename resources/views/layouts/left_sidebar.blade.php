@@ -13,8 +13,8 @@
   <hr class="sidebar-divider my-0">
 
   <!-- Nav Item - Dashboard -->
-  <li class="nav-item active">
-    <a class="nav-link" href="{{ url('/home') }}">
+  <li class="nav-item">
+    <a class="nav-link" id="menu_dashboard" href="{{ url('/home') }}">
       <i class="fas fa-fw fa-tachometer-alt"></i>
       <span>Dashboard</span></a>
   </li>
@@ -126,6 +126,7 @@
     if(menu_id){
       let $menuLink = $('#menu_' + menu_id);
       $menuLink.addClass('active');
+      $menuLink.closest('.nav-item').addClass('active');
       $menuLink.closest('div.collapse').addClass('show');
       $menuLink.closest('div.collapse').prev('a.nav-link').removeClass('collapsed');
       document.title = $menuLink.text();

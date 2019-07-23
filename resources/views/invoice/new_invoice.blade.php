@@ -307,7 +307,7 @@
     }
     try{
       let items = await $.get('{{ route("get_fulfilment_items") }}/' + thisFulfilmentId);
-      $thisTr.after(`<tr items_for="${thisFulfilmentId}"><td colspan="4">${reduceItemsToTable(items)}</td></tr>`);
+      $thisTr.after(`<tr items_for="${thisFulfilmentId}"><td colspan="6">${reduceItemsToTable(items)}</td></tr>`);
       $('#fulfilments-list tr[items_for='+ thisFulfilmentId +']').show();
       $(thisBtn).find('i').toggleClass('fa-plus fa-minus');
     } catch(err) {

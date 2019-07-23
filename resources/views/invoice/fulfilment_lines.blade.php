@@ -15,4 +15,13 @@
         @each('invoice.fulfilment_row', $fulfilments, 'fulfilment')
     @endisset
   </tbody>
+  <tfoot>
+    <tr>
+      <td class="text-right">Total:</td>
+      <td><input type="number" step=".01" name="invoice[sub_total]"></td>
+      <td><input type="number" step=".01" name="invoice[tax_amt]"></td>
+      <td><input type="number" step=".01" name="invoice[grandtotal]"></td>
+      <td></td>
+    </tr>
+  </tfoot>
 </table>

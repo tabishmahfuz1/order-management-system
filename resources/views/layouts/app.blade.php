@@ -40,7 +40,7 @@
                     @include('layouts.left_sidebar')
                 @endauth
 
-                <div id="content-wrapper" class="d-flex flex-column">
+                <div id="content-wrapper" class="d-flex flex-column" style="height: 100vh; overflow: auto;">
                     <!-- Main Content -->
                     <div id="content">
                         @auth

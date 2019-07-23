@@ -17,6 +17,7 @@ class Invoice extends Model
     		else {
     			$invoiceOb = new self;
     		}
+            
     	});
     	
     }
