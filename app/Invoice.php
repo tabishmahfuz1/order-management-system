@@ -13,6 +13,17 @@ class Invoice extends Model
     	return $this->hasMany(InvoiceLine::class, 'invoice_id');
     }
 
+    public function getFulfilmentIds() {
+        return InvoiceLine::where('invoice_id', $this->id)->select('fulfilment_id')->get()
+                ->map(function($i){
+                    return $i->fulfilment_id;
+                });
+    }
+
+    public function Order() {
+        return $this->belongsTo(SalesOrder::class, 'so_id');
+    }
+
     public function CalculateGrandTotal() {
     	$this->grandtotal 	= $this->subtotal + $this->tax_amt + $this->freight + $this->other_costs;
     	return $this;
@@ -84,6 +95,36 @@ class Invoice extends Model
     	return $this;
     }
 
+    public function getInvoiceTotal() {
+        return $this->grandtotal;
+    }
+
+    public function getBalanceAmount() {
+        return $this->balance_amt;
+    }
+
+    public function ClaimedOtherCosts() {
+        if(!isset($this->claimed_other_costs)) {
+            $this->CalculateClaimedFreightAndOtherCost();
+        }
+        return $this->claimed_other_costs;
+    }
+
+    public function ClaimedFreight() {
+        if(!isset($this->claimed_other_costs)) {
+            $this->CalculateClaimedFreightAndOtherCost();
+        }
+        return $this->claimed_freight;
+    }
+
+    public function CalculateClaimedFreightAndOtherCost() {
+        $calc = Invoice::where('so_id', $this->id)->where('id', '!=', $this->id)
+                    ->selectRaw('SUM(freight) AS claimed_freight, SUM(other_costs) AS claimed_other_costs')->first();
+        $this->claimed_freight     = $calc->claimed_freight ?? 0;
+        $this->claimed_other_costs = $calc->claimed_other_costs ?? 0;
+        return $this;
+    }
+
 
     public static function saveInvoice(array $invoice) {
     	$invoiceOb = null;
@@ -97,8 +138,8 @@ class Invoice extends Model
     		$invoiceOb->setSalesOrderID($invoice['so_id'])
     					->setInvoiceDate($invoice['invoice_date'])
     					->setCustomerID($invoice['customer_id'])
-    					->setFreight($invoice['freight'])
-    					->setOtherCosts($invoice['other_costs'])
+    					->setFreight($invoice['freight'] ?? 0)
+    					->setOtherCosts($invoice['other_costs'] ?? 0)
     					->CalculateGrandTotal()
     					->save();
 

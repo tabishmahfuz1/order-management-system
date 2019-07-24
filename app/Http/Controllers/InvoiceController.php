@@ -31,14 +31,22 @@ class InvoiceController extends Controller
     }
 
     public function editInvoice($invoice_id) {
-    	$invoice = Invoice::find($invoice_id);
+    	$invoice = Invoice::find($invoice_id)->CalculateClaimedFreightAndOtherCost();
     	return view('invoice.edit_invoice', compact('invoice'));
     }
 
-    public function getOrderDetails($order_id) {
+    public function viewInvoices(Request $req) {
+        $invoices = Invoice::join('sales_orders', 'sales_orders.id', '=', 'invoices.so_id')
+                        ->join('customers', 'customers.id', '=', 'invoices.customer_id')
+                        ->select('invoices.*', 'customers.name AS customer_name', 'sales_orders.sales_order_no', 'sales_orders.order_date')
+                        ->get();
+        return view('invoice.view_invoices', compact('invoices'));
+    }
+
+    public function getOrderDetails($order_id, $invoice_id = 0) {
     	$order = SalesOrder::find($order_id);
     	$order->customer_name 	= Customer::getNameById($order->customer_id);
-        $order->Fulfilments 	= $order->FulfilmentsWithAmount();
+        $order->Fulfilments 	= $order->FulfilmentsWithAmount($invoice_id);
         $order->claimed_freight = $order->ClaimedFreight();
         $order->claimed_other_costs = $order->ClaimedOtherCosts();
         return response()->json($order);

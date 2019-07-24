@@ -255,7 +255,7 @@
 
   async function getOrderDetails(thisSelect) {
     let orderId = $(thisSelect).val();
-    $.get('{{ route("get_order_detail_for_invoice") }}/' + orderId, (data) => {
+    $.get('{{ route("get_order_detail_for_invoice") }}/' + orderId , (data) => {
       // console.log(data);
       updateOrder(data);
       renderFulfilments(data.Fulfilments);

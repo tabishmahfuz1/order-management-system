@@ -12,7 +12,8 @@
   </div>
   <div class="card shadow-sm">
   <div class="card-header with-border">
-    <h6 class="m-0 font-weight-bold text-primary">Edit {{ $fulfilment_module_name ?? "Invoice" }}</h6>
+    <h6 class="m-0 font-weight-bold text-primary">Edit {{ $fulfilment_module_name ?? "Invoice" }} -
+      <span objName="Invoice" data-objProp="invoice_no" data-updateProp="innerHTML"></span></h6>
 
     <!-- <div class="box-tools pull-right">
       <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -20,28 +21,30 @@
   </div>
   <!-- /.box-header -->
   <div class="card-body">
-
     <form action="{{ route('save_invoice') }}" 
           method="post" 
           enctype="multipart/form-data" 
           onsubmit="return validateForm();">
       {{csrf_field()}}
       <input type="hidden" 
-              objName="order" 
+              objName="Order" 
               data-objProp="id" 
-              name="order[id]" 
+              name="invoice[so_id]" 
               value="">
       <input type="hidden" 
-              objName="fulfilment" 
+              objName="Invoice" 
               data-objProp="id" 
-              name="fulfilment[id]" 
+              name="invoice[invoice_id]" 
               value="">
       <div class="row">
         <div class="col">
           <div class="form-group">
             <label class="control-label">Sales Order Number</label>
             <input type="text" 
-                    name="invoice[so_num]" 
+                    name="invoice[so_num]"
+                    objName="Order" 
+                    data-objProp="sales_order_no" 
+                    value="" 
                     class="form-control form-control-sm"
                     disabled="" />
           </div>
@@ -50,7 +53,7 @@
           <div class="form-group">
             <label class="control-label">Order Date</label>
             <input type="text" 
-                    objName="order" 
+                    objName="Order" 
                     data-objProp="order_date" 
                     name="order[order_date]" 
                     class="form-control form-control-sm datepicker" 
@@ -63,16 +66,16 @@
           <div class="form-group">
             <label class="control-label">{{ $customer_module_alias ?? "Distributor" }}</label>
             <input type="text" 
-                    objName="order" 
+                    objName="Order" 
                     data-objProp="customer_name" 
                     name="order[customer_name]" 
                     value="" 
                     id="customer_name" 
                     class="form-control-sm form-control" disabled />
             <input type="hidden" 
-                    objName="order" 
+                    objName="Order" 
                     data-objProp="customer_id" 
-                    name="order[customer_id]" 
+                    name="invoice[customer_id]" 
                     value="" 
                     id="customer_id" 
                     class="form-control-sm form-control" />
@@ -82,7 +85,7 @@
           <div class="form-group">
             <label class="control-label">Reference Number</label>
             <input type="text" 
-                    objName="order" 
+                    objName="Order" 
                     data-objProp="ref_no" 
                     name="order[ref_no]" 
                     id="order_ref_no" 
@@ -103,7 +106,7 @@
         <div class="col-md-6">
           <textarea name="order[memo]" 
                     id="order_memo" 
-                    objName="order" 
+                    objName="Order" 
                     data-objProp="memo" 
                     class="form-control" 
                     placeholder="Memo" 
@@ -154,7 +157,7 @@
                   <td>
                     <input type="number" 
                             step=".01" 
-                            objName="order" 
+                            objName="Order" 
                             data-objProp="freight" 
                             class="form-control-sm form-control" 
                             name="order[freight]" 
@@ -164,7 +167,7 @@
                     <input type="number" 
                             step=".01" 
                             class="form-control-sm form-control" 
-                            objName="order"
+                            objName="Invoice"
                             data-objProp="claimed_freight"
                             name="order[claimed_freight]" 
                             readonly="" />
@@ -175,6 +178,8 @@
                             id="freight_input"
                             class="form-control-sm form-control" 
                             name="invoice[freight]" 
+                            objName="Invoice" 
+                            data-objProp="freight" 
                             value="" 
                             onchange="validateClaimedOtherCosts()" />
                   </td>
@@ -185,7 +190,7 @@
                     <input type="number" 
                             step=".01" 
                             class="form-control-sm form-control"
-                            objName="order"
+                            objName="Order"
                             data-objProp="other_costs"
                             name="order[other_costs]" 
                             readonly="">
@@ -194,7 +199,7 @@
                     <input type="number" 
                             step=".01" 
                             class="form-control-sm form-control"
-                            objName="order"
+                            objName="Invoice"
                             data-objProp="claimed_other_costs"
                             name="order[claimed_other_costs]" 
                             readonly="">
@@ -205,6 +210,8 @@
                             id="other_cost_input"
                             class="form-control-sm form-control"
                             name="invoice[other_costs]" 
+                            objName="Invoice" 
+                            data-objProp="other_costs" 
                             value="" 
                             onchange="validateClaimedOtherCosts()" />
                   </td>
@@ -236,23 +243,21 @@
 <script src="{{asset('custom-libraries/select2/dist/js/select2.full.min.js')}}"></script>
 
 <script type="text/javascript">
-  var menu_id = "new_invoice";
+  var menu_id = "view_invoices";
+  let fulfilmentSet = new Set({!! json_encode($invoice->getFulfilmentIds()) !!});
   $(function(){
     $('.select2').select2();
     $('.datepicker').datepicker({
       format: 'yyyy-mm-dd',
     }).datepicker('setDate', 'today');
-    @isset($order_id)
-      $('#sales_order_select').val('{{ $order_id }}');
-      $('#sales_order_select').change();
-    @endisset
+    getOrderDetails('{{ $invoice->so_id }}');
   });
 
-  async function getOrderDetails(thisSelect) {
-    let orderId = $(thisSelect).val();
-    $.get('{{ route("get_order_detail_for_invoice") }}/' + orderId, (data) => {
+  async function getOrderDetails(orderId) {
+    $.get('{{ route("get_order_detail_for_invoice") }}/' + orderId + '/' + Invoice.Invoice.id, (data) => {
       // console.log(data);
-      updateOrder(data);
+      let obj = 'Order';
+      Invoice({obj, data});
       renderFulfilments(data.Fulfilments);
     });
   }
@@ -263,6 +268,7 @@
     },``);
 
     $('#fulfilments-list').html(fulfilmentsHtml);
+    checkFulfilmentsInSet(fulfilmentSet);
   }
 
   function createFulfilmentRow(fulfilment) {
@@ -279,18 +285,52 @@
                 ])`;
   }
 
-  function updateOrder(data) {
-    if(!updateOrder.Order) {
-      updateOrder.Order = {};
+  function checkFulfilmentsInSet(fulfilment_set) {
+    for(let row of document.querySelectorAll('.invoice_fulfilment_row')) {
+      // console.log(row, row.dataset.fulfilment_id)
+      if(fulfilment_set.has(parseInt(row.dataset.fulfilment_id))) {
+        $(row).find('.fulfilment_checkbox').prop('checked', true);
+      }
     }
-    Object.assign(updateOrder.Order, data);
+    calculateInvoiceTotals();
+  }
 
-    for(let e of document.querySelectorAll('[objName=order]')) {
-      if(updateOrder.Order.hasOwnProperty(e.dataset.objprop)) {
-        e.value = updateOrder.Order[e.dataset.objprop];
+  function Invoice(data) {
+    if(!data) {
+
+    } else if(!data.obj) {
+      console.error("Missing [obj] property in", data);
+      return false;
+    } else if(!Invoice[data.obj]) {
+      console.error("Invalid Object Name", data.obj);
+      return false;
+    }
+    Object.assign(Invoice[data.obj], data.data);
+
+    for(let e of document.querySelectorAll('[objName]')) {
+      // console.log(e)
+      let obj = e.attributes.objname.value,
+          prop= e.dataset.objprop,
+          updateProp=e.dataset.updateprop;
+      if(!Invoice[obj]) {
+        console.warn("Unknown Object", obj);
+        continue;
+      }
+      if(Invoice[obj].hasOwnProperty(e.dataset.objprop)) {
+        if(updateProp) {
+          // console.log(e, updateProp, Invoice[obj][prop], obj, prop)
+          e[updateProp] = Invoice[obj][prop];
+        } else {
+          e.value = Invoice[obj][prop];
+        }
       }
     }
   }
+
+  Invoice.Invoice = {!! json_encode($invoice) !!};
+  Invoice.Order   = {};
+  Invoice({obj: "Invoice", data: {}});
+
 
   async function getItems(thisBtn) {
     let $thisTr = $(thisBtn).closest('tr'),
@@ -340,34 +380,39 @@
   }
 
   function validateClaimedOtherCosts() {
-    if($('#freight_input').val() === '') {
-      if(updateOrder.Order.freight > updateOrder.Order.claimed_freight) {
+    let $freight = $('#freight_input'), freight = $otherCost.val();
+    if(freight === '') {
+      if(Invoice.Order.freight > Invoice.Order.claimed_freight) {
         showDangerMsg("Please enter the Freight Cost to charge in this Invoice");
-        $('#freight_input').addClass('is-invalid');
+        $freight.addClass('is-invalid');
         return false;
       } 
+    } else if((Invoice.Order.freight - Invoice.Order.claimed_freight) < parseFloat(freight)){
+      showDangerMsg("Invalid Other Cost entered");
+      $freight.addClass('is-invalid').focus();
+      return false;
     } else {
-      $('#freight_input').removeClass('is-invalid');
+      $freight.removeClass('is-invalid');
     }
 
-    if($('#other_cost_input').val() === '') {
-      if(updateOrder.Order.other_costs > updateOrder.Order.claimed_other_costs) {
+    let $otherCost = $('#other_cost_input'), otherCost = $otherCost.val();
+    if(otherCost === '') {
+      if(Invoice.Order.other_costs > Invoice.Order.claimed_other_costs) {
         showDangerMsg("Please enter the Other Cost to charge in this Invoice");
-        $('#other_cost_input').addClass('is-invalid');
+        $otherCost.addClass('is-invalid');
         return false;
       } 
-    } else {
-      $('#other_cost_input').removeClass('is-invalid');
+    } else if((Invoice.Order.other_costs - Invoice.Order.claimed_other_costs) < parseFloat(otherCost)){
+      showDangerMsg("Invalid Other Cost entered");
+      $otherCost.addClass('is-invalid').focus();
+      return false;
+    }else {
+      $otherCost.removeClass('is-invalid');
     }
     return true;
   }
 
   function validateForm() {
-    if(!$('select#sales_order_select').val().trim()){
-      $('select#sales_order_select').addClass('is-invalid');
-      showDangerMsg("Please select a Sales Order");
-      return false;
-    }
     let validQtys = true;
     if($('.fulfilment_checkbox:checked').length == 0) {
       showDangerMsg("Please select at least one Fulfilment");
@@ -393,9 +438,9 @@
       grandtotal += parseFloat($row.find('.fulfilment_total_td').text().replace(/,/g, '') || 0);
       // console.table({subtotal, tax_total, grandtotal});
     }
-    $('#inv_sub_total_input').val(subtotal);
-    $('#inv_tax_amt_input').val(tax_total);
-    $('#inv_grandtotal_input').val(grandtotal);
+    $('#inv_sub_total_input').val(subtotal.toFixed(2));
+    $('#inv_tax_amt_input').val(tax_total.toFixed(2));
+    $('#inv_grandtotal_input').val(grandtotal.toFixed(2));
   }
 
   function SubmitForm() {

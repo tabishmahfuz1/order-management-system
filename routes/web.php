@@ -57,10 +57,11 @@ Route::prefix('fulfilment')->group(function(){
 
 Route::prefix('invoice')->group(function(){
 	Route::get('new/{order_id?}', 'InvoiceController@newInvoice')->name('new_invoice');
-	Route::get('get_order_detail/{order_id?}', 'InvoiceController@getOrderDetails')->name('get_order_detail_for_invoice');
+	Route::get('get_order_detail/{order_id?}/{invoice_id?}', 'InvoiceController@getOrderDetails')->name('get_order_detail_for_invoice');
 	Route::get('get_fulfilment_items/{fulfilment_id?}', 'InvoiceController@getFulfilmentItems')->name('get_fulfilment_items');
 
 	Route::post('save', 'InvoiceController@saveInvoice')->name('save_invoice');
 	Route::get('edit/{invoice_id}', 'InvoiceController@editInvoice')->name('edit_invoice');
+	Route::get('view', 'InvoiceController@viewInvoices')->name('view_invoices');
 });
 

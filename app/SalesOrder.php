@@ -31,15 +31,24 @@ class SalesOrder extends Model
     }
 
     public function ClaimedOtherCosts() {
-        $this->claimed_freight = 0;
-        $this->claimed_other_costs = 0;
+        if(!isset($this->claimed_other_costs)) {
+            $this->CalculateClaimedFreightAndOtherCost();
+        }
         return $this->claimed_other_costs;
     }
 
     public function ClaimedFreight() {
-        $this->claimed_freight = 0;
-        $this->claimed_other_costs = 0;
+        if(!isset($this->claimed_other_costs)) {
+            $this->CalculateClaimedFreightAndOtherCost();
+        }
         return $this->claimed_freight;
+    }
+
+    public function CalculateClaimedFreightAndOtherCost() {
+        $calc = Invoice::where('so_id', $this->id)->selectRaw('SUM(freight) AS claimed_freight, SUM(other_costs) AS claimed_other_costs')->first();
+        $this->claimed_freight     = $calc->claimed_freight;
+        $this->claimed_other_costs = $calc->claimed_other_costs;
+        return $this;
     }
 
     public function isCompletelyFulfilled() {
@@ -48,10 +57,21 @@ class SalesOrder extends Model
                 ->exists());
     }
 
-    public function FulfilmentsWithAmount() {
+    public function FulfilmentsWithAmount($invoice_id = 0, $pending = true) {
         return Fulfilment::where('so_id', $this->id)
                     ->join('fulfilment_items', 'fulfilment_items.fulfilment_id', '=', 'fulfilments.id')
                     ->join('sales_order_item_details AS soid', 'soid.id', '=', 'fulfilment_items.so_item_id')
+                    ->when($pending, function($q) use($invoice_id){
+                        return $q->where('fulfilments.is_invoiced', 0)
+                                ->when(($invoice_id > 0), function($q) use($invoice_id){
+                                    return $q->orWhereExists(function($q) use($invoice_id){
+                                        $q->selectRaw(1)
+                                            ->from('invoice_lines')
+                                            ->whereRaw('invoice_lines.fulfilment_id = fulfilments.id')
+                                            ->where('invoice_lines.invoice_id', $invoice_id);
+                                    });              
+                                });
+                    })
                     ->groupBy('fulfilments.id')
                     ->select('fulfilments.*', 
                         DB::Raw('ROUND(SUM(soid.item_rate * fulfilment_items.fulfilment_qty), 2) As fulfilment_amt'),
