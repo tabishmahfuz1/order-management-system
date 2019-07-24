@@ -17,7 +17,7 @@ class InvoiceController extends Controller
     }
 
     public function newInvoice($order_id = 0) {
-    	$orders = SalesOrder::where('is_invoiced', '<', 2)
+    	$orders = SalesOrder::where('is_invoiced', '<', SalesOrder::INVOICED)
     						->where('fulfilment_status', '>', 0)
     						->select('id', 'sales_order_no')
     						->get();

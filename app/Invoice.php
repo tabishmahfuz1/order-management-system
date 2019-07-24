@@ -8,6 +8,8 @@ use DB;
 
 class Invoice extends Model
 {
+    public const PAID           = 2;
+    public const PARTIALLY_PAID = 1;
     //
     public function Fulfilments() {
     	return $this->hasMany(InvoiceLine::class, 'invoice_id');
@@ -125,6 +127,18 @@ class Invoice extends Model
         return $this;
     }
 
+    public function getReceivedAmount() {
+        return $this->received_amt ?? 0;
+    }
+
+    public function CalculateBalanceAmount() {
+        $this->balance_amt = $this->getInvoiceTotal() - $this->getReceivedAmount();
+        return $this;
+    }
+
+    public function isPaid() {
+        return $this->is_paid;
+    }
 
     public static function saveInvoice(array $invoice) {
     	$invoiceOb = null;
@@ -145,11 +159,13 @@ class Invoice extends Model
 
     		$invoiceOb->setFulfilments($invoice['fulfilments'])
     				->CalculateGrandTotal()
+                    ->calculateBalanceAmount()
     				->save();
 
+            $invoiceOb->Order->setAsInvoiced();
+
     		if(empty($invoice['invoice_id'])){
-    			$invoiceOb->setBalanceAmount($invoiceOb->grandtotal)
-    						->GenerateInvoiceNumber()->save();
+    			$invoiceOb->GenerateInvoiceNumber()->save();
     		}
     	});
     	return $invoiceOb;	

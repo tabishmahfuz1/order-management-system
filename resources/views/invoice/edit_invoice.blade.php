@@ -21,7 +21,7 @@
   </div>
   <!-- /.box-header -->
   <div class="card-body">
-    <form action="{{ route('save_invoice') }}" 
+    <form action="{{ $invoice->isPaid()? '#' : route('save_invoice') }}" 
           method="post" 
           enctype="multipart/form-data" 
           onsubmit="return validateForm();">
@@ -226,7 +226,9 @@
       </div>
       
       <div class="text-center">
-        <button type="submit" class="btn btn-primary">Save</button>
+        @if(!$invoice->isPaid())
+            <button type="submit" class="btn btn-primary">Save</button>
+        @endif
       </div>
     </form>
 </div>
@@ -259,6 +261,9 @@
       let obj = 'Order';
       Invoice({obj, data});
       renderFulfilments(data.Fulfilments);
+      @if($invoice->isPaid())
+          $('input').prop('disabled', true);
+      @endif
     });
   }
 

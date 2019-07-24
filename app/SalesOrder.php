@@ -14,6 +14,9 @@ class SalesOrder extends Model
     public const FULFILLED           = 2;
     public const PARTIALLY_FULFILLED = 1;
 
+    public const INVOICED            = 2;
+    public const PARTIALLY_INVOICED  = 1;
+
 	public function Items() {
 		return $this->hasMany('App\SalesOrderItemDetail', 'sales_order_id');
 	}
@@ -122,14 +125,19 @@ class SalesOrder extends Model
         } else if($this->is_paid) {
             return "Paid and Closed";
         } else if($this->is_invoiced) {
-            return "Invoiced";
+            switch($this->is_invoiced) {
+                case self::INVOICED:
+                    return "Invoiced";
+                case self::PARTIALLY_INVOICED:
+                    return "Partially Invoiced";
+            }
         } else {
             switch($this->fulfilment_status) {
-                case 3:
+                case self::DELIVERED:
                     return "Delivered";
-                case 2:
+                case self::FULFILLED:
                     return "Fulfilled";
-                case 1:
+                case self::PARTIALLY_FULFILLED:
                     return "Partially Fulfilled";
                 default:
                     return "Order Entered";
@@ -140,6 +148,26 @@ class SalesOrder extends Model
     public function setFulfilmentStatus($status) {
         $this->fulfilment_status = $status;
         return $this;
+    }
+
+    public function getFulfilmentStatus() {
+        return $this->fulfilment_status;
+    }
+
+    public function setAsInvoiced() {
+        if($this->fulfilment_status == 0) {
+            return false;
+        }
+        if($this->fulfilment_status < self::FULFILLED) {
+            $this->is_invoiced = self::PARTIALLY_INVOICED;
+        } else {
+            if(Fulfilment::where('so_id', $this->id)->where('is_invoiced', 0)->exists()) {
+                $this->is_invoiced = self::PARTIALLY_INVOICED;
+            } else {
+                $this->is_invoiced = self::INVOICED;
+            }
+        }
+        return $this->save();
     }
 
     // ************************  Static Functions ***************************
