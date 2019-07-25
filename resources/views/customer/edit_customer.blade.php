@@ -26,33 +26,33 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="control-label">Name</label>
-            <input class="form-control form-control-sm" name="name" placeholder="Name" value="{{ $customer->name }}"></input>
+            <input class="form-control form-control-sm" objName="Customer" data-objprop="name" name="name" placeholder="Name" value=""></input>
           </div>
           <div class="form-group">
             <label class="control-label">Address</label>
-            <input class="form-control form-control-sm" type="text" name="address" placeholder="Address" value="{{ $customer->address }}"></input>
+            <input class="form-control form-control-sm" objName="Customer" data-objprop="address" type="text" name="address" placeholder="Address" value=""></input>
           </div>
           <div class="form-group">
             <label class="control-label">City</label>
-            <input class="form-control form-control-sm" name="city" placeholder="City"  value="{{ $customer->city }}"></input>
+            <input class="form-control form-control-sm" objName="Customer" data-objprop="address" name="city" placeholder="City"></input>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
             <label class="control-label">Status</label>
-            <select name="status" class="form-control form-control-sm">
+            <select name="status" class="form-control form-control-sm" objName="Customer" data-objprop="status" >
               <option value="1">Active</option>
               <option value="0">Disabled</option>
             </select>
           </div>
           <div class="form-group">
             <label class="control-label">Discount (%)</label>
-            <input class="form-control form-control-sm" name="discount" type="number" step=".01" placeholder="Discount (%)" value="{{ $customer->discount }}"></input>
+            <input class="form-control form-control-sm" name="discount" objName="Customer" data-objprop="discount" type="number" step=".01" placeholder="Discount (%)" value=""></input>
           </div>
           
           <div class="form-group">
             <label class="control-label">State</label>
-            <select name="state" class="select2 form-control form-control-sm">
+            <select name="state" class="select2 form-control form-control-sm" objName="Customer" data-objprop="state_id">
               <option value="">Select State</option>
               @foreach($states as $state)
                 <option value="{{ $state->id }}">{{ $state->name }}</option>
@@ -72,7 +72,7 @@
 <script src="{{asset('custom-libraries/select2/dist/js/select2.full.min.js')}}"></script>
 
 <script type="text/javascript">
-  $('select[name=state]').val('{{ $customer->state_id }}');
+  // $('select[name=state]').val('{{ $customer->state_id }}');
   var menu_id = "view_customers";
 
 
@@ -89,6 +89,30 @@
     }
 
   }
+
+  function Customer(data) {
+    Object.assign(Customer.data, data);
+
+    for(let e of document.querySelectorAll('[objName=Customer]')) {
+      // console.log(e)
+      let obj = e.attributes.objname.value,
+          prop= e.dataset.objprop,
+          updateProp=e.dataset.updateprop;
+      if(Customer.data.hasOwnProperty(e.dataset.objprop)) {
+        if(updateProp) {
+          // console.log(e, updateProp, Invoice[obj][prop], obj, prop)
+          e[updateProp] = Customer.data[prop];
+        } else {
+          e.value = Customer.data[prop];
+        }
+      }
+    }
+  }
+
+  Customer.data = {!! json_encode($customer) !!}
+  Customer({})
+
+
   @if(Session::has('success'))
     $('.info_msg').prev('h6').hide();
     $('.info_msg').parent('div').addClass('bg-gradient-success text-white');
