@@ -293,7 +293,7 @@
 
     let row = `@include('order.so_item_row', [
                   'item' => [
-                    'id'        => $order->id,
+                    'id'        => '${item.id || 0}',
                     'item_name' => '${item.item_name}',
                     'item_id' => '${item.item_id}',
                     'item_cost' => '${item.item_cost}',

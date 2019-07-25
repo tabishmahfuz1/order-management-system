@@ -16,7 +16,7 @@ class FulfilmentController extends Controller
     }
 
     public function newFulfilment($order_id = 0) {
-    	$orders = SalesOrder::select('id', 'sales_order_no')->get();
+    	$orders = SalesOrder::select('id', 'sales_order_no')->where('fulfilment_status', '<', SalesOrder::FULFILLED)->get();
     	return view('fulfilment.new_fulfilment', compact('orders', 'order_id'));
     }
 

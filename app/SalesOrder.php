@@ -87,7 +87,7 @@ class SalesOrder extends Model
 
     public function addItems(array $items) {
     	foreach ($items as $r_item) {
-    		if(isset($r_item['so_item_id']))
+    		if(!empty($r_item['so_item_id']))
     			$item = SalesOrderItemDetail::find($r_item['so_item_id']);
     		else{
     			$item = new SalesOrderItemDetail();
@@ -100,7 +100,7 @@ class SalesOrder extends Model
             $item->item_disc_per    = $r_item['item_disc_per'];
             $item->item_disc_amt = $r_item['item_disc_amt'];
             $item->item_rate        = $r_item['item_rate'];
-            $item->tax_rate        = $r_item['tax_rate'];
+            $item->tax_rate        = $r_item['tax_rate'] ?? 0;
     		$item->item_qty_on_hand = $r_item['qty_on_hand'] ?? 0;
             $item->item_qty         = $r_item['item_qty'];
             if(isset($r_item['balance_qty']))
@@ -176,19 +176,47 @@ class SalesOrder extends Model
     }
 
     public static function getMonthSales() {
-        return self::where(DB::Raw('YEAR(order_date)'), date('Y'))
-                    ->where(DB::Raw('MONTH(order_date)'), date('m'))
+        return self::where(DB::Raw(static::YearFromDateSQL('order_date')), date('Y'))
+                    ->where(DB::Raw(static::MonthFromDateSQL('order_date')), date('m'))
                     ->sum('order_total') ?? 0;
     }
 
     public static function getYearSales() {
-        return self::where(DB::Raw('YEAR(order_date)'), date('Y'))
+        return self::where(DB::Raw(static::YearFromDateSQL('order_date')), date('Y'))
                     ->sum('order_total') ?? 0;
     }
 
     public static function getPendingOrdersCount() {
-        return self::where(DB::Raw('IFNULL(is_cancelled, 0)'), 0)
-                    ->where(DB::Raw('IFNULL(fulfilment_status, 0)'), '<', 2)
+        return self::where(DB::Raw('coalesce(is_cancelled, 0)'), 0)
+                    ->where(DB::Raw('coalesce(fulfilment_status, 0)'), '<', 2)
                     ->count() ?? 0;
     }
+
+    public static function YearFromDateSQL($column_name) {
+        switch(DB::connection()->getPDO()->getAttribute(\PDO::ATTR_DRIVER_NAME))
+        {
+            case 'pgsql':
+                return "date_part('year', $column_name)";
+                break;
+
+            default:
+                return "YEAR($column_name)";
+                break;
+        }
+    }
+
+    public static function MonthFromDateSQL($column_name) {
+        switch(DB::connection()->getPDO()->getAttribute(\PDO::ATTR_DRIVER_NAME))
+        {
+            case 'pgsql':
+                return "date_part('month', $column_name)";
+                break;
+
+            default:
+                return "MONTH($column_name)";
+                break;
+        }
+    }
+
+    
 }
