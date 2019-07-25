@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         if(env('REDIRECT_HTTPS', false)){
-            $url->forceSchema('https');
+            $url->forceScheme('https');
         }
     }
 }
