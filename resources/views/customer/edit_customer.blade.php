@@ -26,7 +26,13 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="control-label">Name</label>
-            <input class="form-control form-control-sm" objName="Customer" data-objprop="name" name="name" placeholder="Name" value=""></input>
+            <input class="form-control form-control-sm" 
+                    objName="Customer" 
+                    data-objprop="name" 
+                    name="name" 
+                    placeholder="Name" 
+                    value=""></input>
+            <input type="hidden" name="customer_id" objName="Customer" data-objprop="id" />
           </div>
           <div class="form-group">
             <label class="control-label">Address</label>
@@ -34,7 +40,7 @@
           </div>
           <div class="form-group">
             <label class="control-label">City</label>
-            <input class="form-control form-control-sm" objName="Customer" data-objprop="address" name="city" placeholder="City"></input>
+            <input class="form-control form-control-sm" objName="Customer" data-objprop="city" name="city" placeholder="City"></input>
           </div>
         </div>
         <div class="col-md-4">
