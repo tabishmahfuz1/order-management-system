@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(UrlGenerator $url)
     {
         //
         Blade::directive('date', function ($expression) {
@@ -33,5 +33,9 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('jsDateFormatString', function($e) {
            return "<?php echo 'yyyy-mm-dd' ?>"; 
         });
+
+        if(env('REDIRECT_HTTPS', false)){
+            $url->forceSchema('https');
+        }
     }
 }
