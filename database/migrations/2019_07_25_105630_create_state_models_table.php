@@ -18,7 +18,7 @@ class CreateStateModelsTable extends Migration
             $table->string('name');
             // $table->timestamps();
         });
-        DB::insert("INSERT INTO `state_models` (`id`, `name`) VALUES
+        DB::insert("INSERT INTO state_models (id, name) VALUES
                     (1, 'ANDAMAN AND NICOBAR ISLANDS'),
                     (2, 'ANDHRA PRADESH'),
                     (3, 'ARUNACHAL PRADESH'),
