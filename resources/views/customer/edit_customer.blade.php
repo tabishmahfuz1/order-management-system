@@ -11,7 +11,7 @@
   </div>
   <div class="card shadow-sm">
   <div class="card-header with-border">
-    <h6 class="m-0 font-weight-bold text-primary">Edit {{ $module_name ?? "Distributor" }}</h6>
+    <h6 class="m-0 font-weight-bold text-primary">Edit {{ $module_name ?? "Distributor" }} - <span objName="Customer" data-objprop="name" data-updateProp="innerHTML"></span></h6>
 
     <!-- <div class="box-tools pull-right">
       <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
