@@ -5,7 +5,7 @@
 	</button>
 </div>
 <!-- Footer .sticky-footer  -->
-<footer class="bg-white">
+<footer class="bg-white w-100" style="bottom: 0; position: fixed;">
   <div class="container my-auto">
     <div class="copyright text-center my-auto">
       <span>Copyright &copy; Your Website 2019</span>

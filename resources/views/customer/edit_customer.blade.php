@@ -3,12 +3,6 @@
 <link rel="stylesheet" href="{{asset('custom-libraries/select2/dist/css/select2.min.css')}}">
 <!-- Begin Page Content -->
 <div class="container-fluid">
-
-  <!-- Page Heading -->
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <!-- <h1 class="h3 mb-0 text-gray-800">New Item</h1> -->
-    <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
-  </div>
   <div class="card shadow-sm">
   <div class="card-header with-border">
     <h6 class="m-0 font-weight-bold text-primary">Edit {{ $module_name ?? "Distributor" }}</h6>

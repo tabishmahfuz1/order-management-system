@@ -29,6 +29,7 @@ Route::prefix('item')->group(function () {
 	Route::get('/edit_item/{item_id?}', 'ItemController@editItem')->name('edit_item');
 	Route::post('/save_item', 'ItemController@saveItem')->name('save_item');
 	Route::get('get_item/{item_id?}', 'ItemController@getItem')->name('get_item');
+	Route::post('add_stock_detail', 'ItemController@addStockDetail')->name('add_stock_detail');
 });
 
 Route::prefix('customer')->group(function(){
