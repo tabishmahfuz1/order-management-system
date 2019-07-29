@@ -27,6 +27,10 @@ class Item extends Model
     	return $this;
     }
 
+    public function addStockDetail($stock_detail) {
+        
+    }
+
 
     /**
     *

@@ -42,6 +42,12 @@ class ItemController extends Controller
     	return view('inventory.view_items', compact('items'));
     }
 
+    public function addStockDetail(Request $req) {
+        dd($req->all());
+        $item = Item::find($req->item_id);
+        $item->addStockDetail($req->all());
+    }
+
     /**
     * Get Item by item_id
     *

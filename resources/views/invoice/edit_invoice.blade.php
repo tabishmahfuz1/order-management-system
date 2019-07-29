@@ -4,12 +4,6 @@
 <link rel="stylesheet" href="{{asset('custom-libraries/select2/dist/css/select2.min.css')}}">
 <!-- Begin Page Content -->
 <div class="container-fluid">
-
-  <!-- Page Heading -->
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <!-- <h1 class="h3 mb-0 text-gray-800">New Item</h1> -->
-    <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
-  </div>
   <div class="card shadow-sm">
   <div class="card-header with-border">
     <h6 class="m-0 font-weight-bold text-primary">Edit {{ $fulfilment_module_name ?? "Invoice" }} -
@@ -340,13 +334,16 @@
   async function getItems(thisBtn) {
     let $thisTr = $(thisBtn).closest('tr'),
         thisFulfilmentId = $thisTr.data('fulfilment_id');
-    if($(thisBtn).find('i').hasClass('fa-minus')) {
-      $(thisBtn).find('i').toggleClass('fa-plus fa-minus');
-    }
+
     $('#fulfilments-list tr[items_for]').hide();
+    $('#fulfilments-list tr').not($thisTr).find('i')
+        .removeClass('fa-minus').addClass('fa-plus');
+        
     if($(thisBtn).find('i').hasClass('fa-minus')) {
       $(thisBtn).find('i').toggleClass('fa-plus fa-minus');
+      return true;
     }
+
     if($('#fulfilments-list tr[items_for='+ thisFulfilmentId +']').length > 0){
       $('#fulfilments-list tr[items_for='+ thisFulfilmentId +']').show();
       $(thisBtn).find('i').toggleClass('fa-plus fa-minus');
@@ -362,6 +359,7 @@
     }
     
   }
+
 
   function reduceItemsToTable(items) {
     // console.log(items);
