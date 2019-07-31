@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Item;
+use App\ItemStockDetail;
+
 class ItemController extends Controller
 {
     //
@@ -43,9 +45,11 @@ class ItemController extends Controller
     }
 
     public function addStockDetail(Request $req) {
-        dd($req->all());
-        $item = Item::find($req->item_id);
-        $item->addStockDetail($req->all());
+        // dd($req->all());
+        // $item = Item::find($req->item_id);
+        // $item->addStockDetail($req->all());
+        $itemStockDetail = ItemStockDetail::saveItemStock($req->all());
+        return $itemStockDetail;
     }
 
     /**

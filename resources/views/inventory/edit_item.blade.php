@@ -160,7 +160,7 @@
                   </tr>
                 </tbody>
                 <tbody id="stock_details_body">
-                  
+                  @each('inventory.item_stock_line_row', $item->StockDetails, 'stockDetail')
                 </tbody>
               </table>
             </div>
@@ -242,10 +242,23 @@
         };
         data._token = '{{ Session::token() }}';
         try{
-          let response = await $.post('{{ route("add_stock_detail") }}', data);
+          let stockDetail = await $.post('{{ route("add_stock_detail") }}', data);
+          $('#stock_details_body').append(createItemStockDetailRow(stockDetail));
         } catch(err) {
           console.error("Error while adding new Stock detail", err);
         }
+  }
+
+  function createItemStockDetailRow(stockDetail) {
+    return `@include('inventory.item_stock_line_row', 
+                  [
+                    'stockDetail' => [
+                      'type' => '${stockDetail.type}',
+                      'date' => '${stockDetail.date}',
+                      'quantity' => '${stockDetail.quantity}',
+                      'remarks' => '${stockDetail.remarks}'
+                    ]
+                  ])`;
   }
 </script>
 <!-- /.container-fluid -->

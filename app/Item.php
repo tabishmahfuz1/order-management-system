@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Item extends Model
 {
     //
+    public function StockDetails() {
+        return $this->hasMany(ItemStockDetail::class, 'item_id');
+    }
 
 	public function getQuantityOnHand() {
     	return $this->qty_on_hand;
@@ -27,7 +30,7 @@ class Item extends Model
     	return $this;
     }
 
-    public function addStockDetail($stock_detail) {
+    public function addStockDetails(array $stock_detail) {
         
     }
 
