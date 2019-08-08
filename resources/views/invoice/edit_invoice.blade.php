@@ -126,7 +126,7 @@
             <a role="tab" 
                 class="nav-link" 
                 data-toggle="tab" 
-                href="#preview_invoice_tab">Preview Invoice</a>
+                href="#payments_tab">Payments</a>
           </li>
         </ul>
         <div class="container-fluid border">
@@ -212,8 +212,10 @@
                 </tr>
               </table>
             </div>
-            <div id="preview_invoice_tab" class="tab-pane" role="tabpanel">
-              
+            <div id="payments_tab" class="tab-pane" role="tabpanel">
+              <div class="col-md-6">
+                @include('invoice.payment_lines', compact('invoice'))                
+              </div>
             </div>
           </div>
         </div>
@@ -245,7 +247,7 @@
     $('.select2').select2();
     $('.datepicker').datepicker({
       format: 'yyyy-mm-dd',
-    }).datepicker('setDate', 'today');
+    });
     getOrderDetails('{{ $invoice->so_id }}');
   });
 

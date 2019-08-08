@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\SalesOrder;
 use App\Customer;
 use App\Invoice;
+use App\InvoicePaymentLine;
 
 class InvoiceController extends Controller
 {
@@ -59,5 +60,10 @@ class InvoiceController extends Controller
     				->select('fulfilment_items.*', 'soid.item_price', 'soid.item_disc_amt', 'soid.item_rate', 'soid.tax_rate', 'items.item_name')
     				->get();
     	return response()->json($items);
+    }
+
+    public function addPayment(Request $req) {
+        $paymentLine = InvoicePaymentLine::savePaymentLine($req->all());
+        return view('invoice.payment_row', compact('paymentLine'));
     }
 }

@@ -15,6 +15,10 @@ class Invoice extends Model
     	return $this->hasMany(InvoiceLine::class, 'invoice_id');
     }
 
+    public function Payments() {
+        return $this->hasMany(InvoicePaymentLine::class, 'invoice_id');
+    }
+
     public function getFulfilmentIds() {
         return InvoiceLine::where('invoice_id', $this->id)->select('fulfilment_id')->get()
                 ->map(function($i){
@@ -58,6 +62,7 @@ class Invoice extends Model
 
     public function setBalanceAmount(float $balance_amt) {
     	$this->balance_amt = $balance_amt;
+        $this->received_amt = $this->grandtotal - $this->balance_amt;
     	return $this;
     }
 

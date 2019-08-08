@@ -61,4 +61,15 @@
         <i class="fas fa-angle-up"></i>
     </a>
 </body>
+<script type="text/javascript">
+    Date.prototype.toDatabaseFormat = function() {
+      var mm = this.getMonth() + 1; // getMonth() is zero-based
+      var dd = this.getDate();
+
+      return [this.getFullYear(),
+              (mm>9 ? '' : '0') + mm,
+              (dd>9 ? '' : '0') + dd
+             ].join('-');
+    };
+</script>
 </html>
