@@ -9,7 +9,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
+		<tr id="new_payment_row">
 			<td>
 				<input type="hidden" 
 						class="payment_line_id_input" />
@@ -43,8 +43,23 @@
 </table>
 
 <script type="text/javascript">
+	$(function(){
+		validatePaymentStatus();
+	});
+
+	function validatePaymentStatus() {
+		if(Invoice.Invoice.balance_amt == 0) {
+			console.log("Already Paid");
+			$('#new_payment_row').find('input,button').prop('disabled', true);
+		}
+	}
 
 	async function AddPayment(thisBtn) {
+		if(Invoice.Invoice.balance_amt == 0) {
+			console.log("Already Paid");
+			return false;
+		}
+		$(thisBtn).prop('disabled', true);
 		let $thisTr 			= $(thisBtn).closest('tr'),
 			payment_line_id 	= $thisTr.find('.payment_line_id_input').val(),
 			date_received 		= $thisTr.find('.received_date_input').datepicker('getDate').toDatabaseFormat(),
@@ -52,7 +67,6 @@
 			balance_amt 		= (parseFloat(Invoice.Invoice.balance_amt) - received_amt),
 			invoice_id 			= Invoice.Invoice.id;
 
-		Invoice({obj: "Invoice", data: {balance_amt: balance_amt}});
 		let data 		= {
 			payment_line_id,
 			date_received,
@@ -62,6 +76,8 @@
 		data._token 	= '{{ Session::token() }}';
 		try{
 			let response 	= await $.post('{{ route("add_payment_to_invoice") }}', data);
+			Invoice({obj: "Invoice", data: {balance_amt: balance_amt}});
+			validatePaymentStatus();
 			if(!payment_line_id) {
 				$('#invoice_payment_list').append(response);
 			} else {
@@ -71,7 +87,7 @@
 		} catch(err) {
 			console.error('Error while adding Item', err);
 		}
-		
+		$(thisBtn).prop('disabled', false);
 	}
 
 	function ClearPaymentRow($row) {

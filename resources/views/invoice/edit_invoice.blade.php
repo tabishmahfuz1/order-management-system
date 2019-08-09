@@ -258,7 +258,7 @@
       Invoice({obj, data});
       renderFulfilments(data.Fulfilments);
       @if($invoice->isPaid())
-          $('input').prop('disabled', true);
+          $('#fulfilments_tab input').prop('disabled', true);
       @endif
     });
   }

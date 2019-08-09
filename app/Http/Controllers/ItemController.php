@@ -19,17 +19,33 @@ class ItemController extends Controller
     }
 
     public function saveItem(Request $req) {
-    	if(isset($req->item_id))
+    	if(isset($req->item_id)){
     		$item = Item::find($req->item_id);
-    	else
+        }
+    	else{
     		$item = new Item();
+        }
 
     	$item->item_name   = $req->item_name;
     	$item->item_cost   = $req->item_cost;
         $item->item_price  = $req->item_price;
-    	$item->qty_on_hand = $req->qty_on_hand;
+    	// $item->qty_on_hand = $req->qty_on_hand;
     	$item->status      = $req->status;
+        $is_new_item       = ! $item->exists;
+        if($is_new_item) {
+            $item->qty_on_hand = 0;
+        }
     	$item->save();
+
+        if($is_new_item) {
+            ItemStockDetail::saveItemStock([
+                'type' => ItemStockDetail::OPENING_STOCK,
+                'date' => date('Y-m-d'),
+                'quantity' => $req->qty_on_hand,
+                'remarks' => 'Opening Stock',
+                'item_id' => $item->id
+            ]);
+        }
 
     	return redirect()->route('edit_item', $item->id)->with(['success' => 'Information Saved']);
     }
