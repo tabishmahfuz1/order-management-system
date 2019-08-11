@@ -23,11 +23,45 @@ class SalesOrderController extends Controller
     }
 
     public function viewSalesOrders(Request $req) {
+        // \DB::enableQueryLog();
     	$orders = SalesOrder::orderBy('id', 'DESC')
                     ->join('customers', 'customers.id', '=', 'sales_orders.customer_id')
                     ->select('sales_orders.*', 'customers.name As customer')
+                    ->when(! empty($req->sales_order_no), function($q) use($req){
+                        return $q->where('sales_order_no', 'LIKE', "%{$req->sales_order_no}%");
+                    })
+                    ->when(! empty($req->customer), function($q) use($req){
+                        return $q->where('customers.name', 'LIKE', "%{$req->customer}%");
+                    })
+                    ->when(! empty($req->ref_no), function($q) use($req){
+                        return $q->where('ref_no', 'LIKE', "%{$req->ref_no}%");
+                    })
+                    ->when(! empty($req->order_date), function($q) use($req){
+                        $comparisonOperator = self::decodeSqlConversionOperator($req->order_date_comparison);
+                        if(! $comparisonOperator) {
+                            return $q;
+                        }
+                        
+                        return $q->where('order_date', $comparisonOperator, $req->order_date);
+                    })
+                    ->when(! empty($req->order_total), function($q) use($req){
+                        $comparisonOperator = self::decodeSqlConversionOperator($req->order_total_comparison);
+                        if(! $comparisonOperator) {
+                            return $q;
+                        }
+                        
+                        return $q->where('order_total', $comparisonOperator, $req->order_total);
+                    })
                     ->get();
-    	return view('order.view_sales_orders', compact('orders'));
+        // return $req->all();
+        $view = view('order.view_sales_orders', compact('orders'));
+        if($req->ajax()) {
+            $sections = $view->renderSections(); // returns an associative array of 'content', 'head' and 'footer'
+
+            return $sections['content']; // this will only return whats in the content section
+
+        }
+    	return $view;
     }
 
     public function editOrder($order_id) {
@@ -83,5 +117,75 @@ class SalesOrderController extends Controller
         $order->customer_name = Customer::getNameById($order->customer_id);
         $order->Items = $order->getItemsWithDetails();
         return response()->json($order);
+    }
+
+    public function getOrderListForDataTable(Request $req) {
+         $columns = array( 
+                            0 =>'sales_orders.sales_order_no', 
+                            1 =>'sales_orders.order_date',
+                            2=> 'customers.name',
+                            3=> 'sales_orders.ref_no',
+                            4=> 'sales_orders.order_total',
+                            4=> 'sales_orders.status',
+                        );
+  
+        $totalData = Post::count();
+            
+        $totalFiltered = $totalData; 
+
+        $limit = $request->input('length');
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+            
+        if(empty($request->input('search.value')))
+        {            
+            $posts = Post::offset($start)
+                         ->limit($limit)
+                         ->orderBy($order,$dir)
+                         ->get();
+        }
+        else {
+            $search = $request->input('search.value'); 
+
+            $posts =  Post::where('id','LIKE',"%{$search}%")
+                            ->orWhere('title', 'LIKE',"%{$search}%")
+                            ->offset($start)
+                            ->limit($limit)
+                            ->orderBy($order,$dir)
+                            ->get();
+
+            $totalFiltered = Post::where('id','LIKE',"%{$search}%")
+                             ->orWhere('title', 'LIKE',"%{$search}%")
+                             ->count();
+        }
+
+        $data = array();
+        if(!empty($posts))
+        {
+            foreach ($posts as $post)
+            {
+                $show =  route('posts.show',$post->id);
+                $edit =  route('posts.edit',$post->id);
+
+                $nestedData['id'] = $post->id;
+                $nestedData['title'] = $post->title;
+                $nestedData['body'] = substr(strip_tags($post->body),0,50)."...";
+                $nestedData['created_at'] = date('j M Y h:i a',strtotime($post->created_at));
+                $nestedData['options'] = "&emsp;<a href='{$show}' title='SHOW' ><span class='glyphicon glyphicon-list'></span></a>
+                                          &emsp;<a href='{$edit}' title='EDIT' ><span class='glyphicon glyphicon-edit'></span></a>";
+                $data[] = $nestedData;
+
+            }
+        }
+          
+        $json_data = array(
+                    "draw"            => intval($request->input('draw')),  
+                    "recordsTotal"    => intval($totalData),  
+                    "recordsFiltered" => intval($totalFiltered), 
+                    "data"            => $data   
+                    );
+            
+        echo json_encode($json_data); 
     }
 }

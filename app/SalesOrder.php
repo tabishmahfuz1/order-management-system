@@ -172,7 +172,15 @@ class SalesOrder extends Model
 
     // ************************  Static Functions ***************************
     public static function getStatuses() {
-        return StatusModel::where('module', 'SO')->get();
+        return array(
+                'ORDER_ENTERED'         => 'Order Entered', 
+                'PARTIALLY_FULFILLED'   => 'Partially Fulfilled', 
+                'FULFILLED'             => 'Fulfilled', 
+                'PARTIALLY_INVOICED'    => 'Partially Invoiced', 
+                'DELIVERED'             => 'Delivered', 
+                'PAID'                  => 'Paid and Closed', 
+                'CANCELLED'             => 'Cancelled', 
+            );
     }
 
     public static function getMonthSales() {

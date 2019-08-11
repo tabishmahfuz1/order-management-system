@@ -7,7 +7,7 @@
 				value="{{ $paymentLine->id }}" />
 	</td>
 	<td class="text-center">
-		@date($paymentLine->date)
+		@date($paymentLine->date_received)
 	</td>
 	<td class="text-right">
 		{{ $paymentLine->received_amt }}

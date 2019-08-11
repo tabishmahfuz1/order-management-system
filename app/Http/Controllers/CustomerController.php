@@ -45,6 +45,30 @@ class CustomerController extends Controller
     public function viewCustomers(Request $req) {
     	$customers = Customer::leftJoin('state_models', 'state_models.id', '=', 'customers.state_id')
                     ->select('customers.*', 'state_models.name AS state')
+                    ->when(! empty($req->name), function($q) use($req){
+                        return $q->where('customers.name', 'LIKE', "%{$req->name}%");
+                    })
+                    ->when(! empty($req->address), function($q) use($req){
+                        return $q->where('customers.address', 'LIKE', "%{$req->address}%");
+                    })
+                    ->when(! empty($req->city), function($q) use($req){
+                        return $q->where('customers.city', 'LIKE', "%{$req->city}%");
+                    })
+                    ->when(! empty($req->state), function($q) use($req){
+                        return $q->where('state_models.name', 'LIKE', "%{$req->state}%");
+                    })
+                    ->when(! empty($req->discount), function($q) use($req){
+                        $comparisonOperator = self::decodeSqlConversionOperator($req->discount_comparison);
+
+                        if(! $comparisonOperator) {
+                            return $q;
+                        }
+                        
+                        return $q->where('customers.discount', $comparisonOperator, $req->discount);
+                    })
+                    ->when(isset($req->status), function($q) use($req){
+                        return $q->where('customers.status', '=', $req->status);
+                    })
                     ->orderBy('id', 'DESC')->get();
     	return view('customer.view_customers', compact('customers'));
     }
