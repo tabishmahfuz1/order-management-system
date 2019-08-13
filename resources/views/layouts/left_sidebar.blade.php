@@ -85,11 +85,11 @@
         <a id="menu_new_invoice" class="collapse-item" href="{{ route('new_invoice') }}">New Invoice</a>
         <a id="menu_view_invoices" class="collapse-item" href="{{ route('view_invoices') }}">View Invoices</a>
       </div>
-      <div class="bg-white py-2 collapse-inner rounded">
+      <!-- <div class="bg-white py-2 collapse-inner rounded">
         <h6 class="collapse-header">Payment:</h6>
         <a id="menu_new_payment" class="collapse-item" href="{{ route('new_fulfilment') }}">New Payment</a>
         <a id="menu_view_payments" class="collapse-item" href="{{ route('view_fulfilments') }}">View Payments</a>
-      </div>
+      </div> -->
     </div>
   </li>
 

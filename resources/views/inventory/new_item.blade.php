@@ -20,7 +20,11 @@
   <!-- /.box-header -->
   <div class="card-body">
 
-    <form action="{{ route('save_item') }}" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
+    <form action="{{ route('save_item') }}" 
+          method="post" 
+          enctype="multipart/form-data" 
+          onsubmit="return validateForm();"
+          autocomplete="off">
       {{csrf_field()}}
       <div class="row">
         <div class="col-md-4">

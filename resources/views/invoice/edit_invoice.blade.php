@@ -91,6 +91,7 @@
       </div>
       <div class="row mb-2">
         <div class="col">
+          <label class="control-label">Invoice Date</label>
           <input type="text" 
                   name="invoice[invoice_date]" 
                   class="datepicker form-control-sm form-control" 
@@ -98,6 +99,7 @@
         </div>
         <div class="col"></div>
         <div class="col-md-6">
+          <label class="control-label">Remarks</label>
           <textarea name="order[memo]" 
                     id="order_memo" 
                     objName="Order" 
@@ -258,7 +260,7 @@
       Invoice({obj, data});
       renderFulfilments(data.Fulfilments);
       @if($invoice->isPaid())
-          $('input').prop('disabled', true);
+          $('#fulfilments_tab input').prop('disabled', true);
       @endif
     });
   }

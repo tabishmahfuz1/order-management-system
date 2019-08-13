@@ -19,17 +19,33 @@ class ItemController extends Controller
     }
 
     public function saveItem(Request $req) {
-    	if(isset($req->item_id))
+    	if(isset($req->item_id)){
     		$item = Item::find($req->item_id);
-    	else
+        }
+    	else{
     		$item = new Item();
+        }
 
     	$item->item_name   = $req->item_name;
     	$item->item_cost   = $req->item_cost;
         $item->item_price  = $req->item_price;
-    	$item->qty_on_hand = $req->qty_on_hand;
+    	// $item->qty_on_hand = $req->qty_on_hand;
     	$item->status      = $req->status;
+        $is_new_item       = ! $item->exists;
+        if($is_new_item) {
+            $item->qty_on_hand = 0;
+        }
     	$item->save();
+
+        if($is_new_item) {
+            ItemStockDetail::saveItemStock([
+                'type' => ItemStockDetail::OPENING_STOCK,
+                'date' => date('Y-m-d'),
+                'quantity' => $req->qty_on_hand,
+                'remarks' => 'Opening Stock',
+                'item_id' => $item->id
+            ]);
+        }
 
     	return redirect()->route('edit_item', $item->id)->with(['success' => 'Information Saved']);
     }
@@ -40,7 +56,37 @@ class ItemController extends Controller
     }
 
     public function viewItems(Request $req) {
-    	$items = Item::orderBy('item_name', 'ASC')->get();
+        // \DB::enableQueryLog();
+    	$items = Item::orderBy('item_name', 'ASC')
+                ->when(! empty($req->item_name), function($q){
+                    return $q->where('item_name', 'LIKE', "%{$req->item_name}%");
+                })
+                ->when(! empty($req->item_cost), function($q) use($req){
+                    $comparisonOperator = self::decodeSqlConversionOperator($req->item_cost_comparison);
+                    if(! $comparisonOperator) {
+                        return $q;
+                    }
+                    return $q->where('items.item_cost', $comparisonOperator, $req->item_cost);
+                })
+                ->when(! empty($req->item_price), function($q) use($req){
+                    $comparisonOperator = self::decodeSqlConversionOperator($req->item_price_comparison);
+                    if(! $comparisonOperator) {
+                        return $q;
+                    }
+                    return $q->where('items.item_price', $comparisonOperator, $req->item_price);
+                })
+                ->when(! empty($req->qty_on_hand), function($q) use($req){
+                    $comparisonOperator = self::decodeSqlConversionOperator($req->qty_on_hand_comparison);
+                    if(! $comparisonOperator) {
+                        return $q;
+                    }
+                    return $q->where('items.qty_on_hand', $comparisonOperator, $req->qty_on_hand);
+                })
+                ->when(isset($req->status), function($q) use($req){
+                    $q->where('item.status', '=', $req->status);
+                })
+                ->get();
+                // return \DB::getQueryLog();
     	return view('inventory.view_items', compact('items'));
     }
 

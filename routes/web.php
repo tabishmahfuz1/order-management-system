@@ -23,6 +23,8 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
+
 Route::prefix('item')->group(function () {
     Route::get('/view_items', 'ItemController@viewItems')->name('view_items');
 	Route::get('/new_item', 'ItemController@newItem')->name('new_item');

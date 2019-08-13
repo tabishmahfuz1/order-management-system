@@ -42,14 +42,14 @@
 
                 <div id="content-wrapper" class="d-flex flex-column" style="height: 100vh; overflow: auto;">
                     <!-- Main Content -->
+                    @auth
+                        @include('layouts.topbar')
+                    @endauth
                     <div id="content">
-                        @auth
-                            @include('layouts.topbar')
-                        @endauth
                         @yield('content')
                     </div>
                     <!-- End of Main Content -->
-
+                    @yield('scripts')
                     @include('layouts.footer')
                     <!-- End of Content Wrapper -->
                 </div>

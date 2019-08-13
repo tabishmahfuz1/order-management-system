@@ -36,7 +36,11 @@
             <div id="general_details" 
                   class="tab-pane fade show active" 
                   role="tabpanel">
-                    <form action="{{ route('save_item') }}" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
+                    <form action="{{ route('save_item') }}" 
+                          method="post" 
+                          enctype="multipart/form-data" 
+                          onsubmit="return validateForm();"
+                          autocomplete="off">
                       {{csrf_field()}}
                       <input type="hidden" name="item_id" value="{{ $item->id }}">
                       <div class="row">
@@ -87,7 +91,8 @@
                             <label class="control-label">Quantity on Hand</label>
                             <input type="number" 
                                     class="form-control form-control-sm" 
-                                    name="qty_on_hand" 
+                                    name="qty_on_hand"
+                                    disabled="" 
                                     placeholder="0" 
                                     value="{{ $item->qty_on_hand }}" />
                           </div>
@@ -243,6 +248,8 @@
         data._token = '{{ Session::token() }}';
         try{
           let stockDetail = await $.post('{{ route("add_stock_detail") }}', data);
+          Item.qty_on_hand += stockDetail.quantity;
+          $('input[name=qty_on_hand]').val(Item.qty_on_hand);
           $('#stock_details_body').append(createItemStockDetailRow(stockDetail));
         } catch(err) {
           console.error("Error while adding new Stock detail", err);
@@ -259,6 +266,11 @@
                       'remarks' => '${stockDetail.remarks}'
                     ]
                   ])`;
+  }
+
+  function EditStockDetail(thisBtn) {
+    let $thisTr = $(thisBtn).closest('tr');
+
   }
 </script>
 <!-- /.container-fluid -->
