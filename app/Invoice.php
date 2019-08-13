@@ -10,6 +10,7 @@ class Invoice extends Model
 {
     public const PAID           = 2;
     public const PARTIALLY_PAID = 1;
+    public const NOT_PAID = 0;
     //
     public function Fulfilments() {
     	return $this->hasMany(InvoiceLine::class, 'invoice_id');
@@ -143,6 +144,24 @@ class Invoice extends Model
 
     public function isPaid() {
         return $this->is_paid;
+    }
+
+    public function setPaymentStatus($status = false) {
+        if($status !== false) {
+            if($status != self::NOT_PAID and $status != self::PAID and $status != self::PARTIALLY_PAID)
+                throw new \Exception("Invalid Payment Status given", 1201);
+                
+            $this->is_paid = $status;
+        } else {
+            if(!$this->received_amt) {
+                $this->is_paid = self::NOT_PAID;
+            } else if($this->is_paid < $this->grandtotal) {
+                $this->is_paid = self::PARTIALLY_PAID;
+            } else {
+                $this->is_paid = self::PAID;
+            }
+        }
+        return $this;
     }
 
     public static function saveInvoice(array $invoice) {
