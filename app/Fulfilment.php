@@ -24,7 +24,7 @@ class Fulfilment extends Model
     					->join('items', 'items.id', '=', 'fulfilment_items.item_id')
     					->select('fulfilment_items.*', 'sales_order_item_details.item_qty',  'sales_order_item_details.item_rate', 'items.item_name',
                             DB::Raw('(items.qty_on_hand + fulfilment_items.fulfilment_qty) AS qty_on_hand'),
-                            DB::Raw('(sales_order_item_details.remaining_qty + fulfilment_items.fulfilment_qty) AS balance_qty'))
+                            DB::Raw('(sales_order_item_details.balance_qty + fulfilment_items.fulfilment_qty) AS balance_qty'))
     					->get();
     }
 
