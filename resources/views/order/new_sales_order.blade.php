@@ -50,7 +50,7 @@
         <div class="col">
           <div class="form-group">
             <label class="control-label">Reference Number</label>
-            <input type="text" name="order[ref_no]" class="form-control form-control-sm" />
+            <input type="text" name="order[ref_no]" required class="form-control form-control-sm" />
           </div>
         </div>
         <!-- <div class="col-md-4">
