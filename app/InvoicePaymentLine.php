@@ -44,7 +44,7 @@ class InvoicePaymentLine extends Model
 
 	    	$paymentLine->save();
 
-	    	$invoice->setBalanceAmount($paymentLine->balance_amt)->save();
+	    	$invoice->setBalanceAmount($paymentLine->balance_amt)->setPaymentStatus()->save();
 
     	});
     	return $paymentLine;

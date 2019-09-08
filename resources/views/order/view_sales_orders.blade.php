@@ -53,7 +53,7 @@
                 @include('components.comparison_filter_input', 
                             [ 'name' => 'order_total', 
                               'placeholder' => 'Order Total',
-                              'input_class' => 'datepicker text-right',
+                              'input_class' => 'text-right',
                               'type' => 'number',
                               'step' => '.01'])  
 

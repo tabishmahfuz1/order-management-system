@@ -26,17 +26,6 @@
           </thead>
           <tfoot>
             <tr>
-              <th>Name</th>
-              <th>Address</th>
-              <th>City</th>
-              <th>State</th>
-              <th>Discount (%)</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </tfoot>
-          <tbody>
-            <tr>
               <td>
                 <input type="text" 
                         name="name" 
@@ -62,23 +51,12 @@
                         class="form-control form-control-sm" />
               </td>
               <td>
-                <div class="input-group"> 
-                    <div class="input-group-append">
-                      <select class="rounded-left form-control-sm form-control"
-                              name="discount_comparison"> 
-                        <option value="lt">&lt;</option>
-                        <option value="le">&lt;=</option>
-                        <option value="ge">&gt;=</option>
-                        <option value="gt">&gt;</option>
-                        <option value="eq">=</option>
-                      </select>
-                    </div>
-                    <input type="number" 
-                            step=".01" 
-                            name="discount" 
-                            placeholder="Discount" 
-                            class="form-control form-control-sm">
-                </div>  
+                @include('components.comparison_filter_input', 
+                            [ 'name' => 'discount', 
+                              'placeholder' => 'Discount',
+                              'input_class' => 'text-right',
+                              'type' => 'number',
+                              'step' => '.01'])
               </td>
               <td>
                 <select name="status"
@@ -92,7 +70,7 @@
                 <button class="btn btn-sm btn-primary"><i class="fa fa-search fa-sm"></i></button>
               </td>
             </tr>
-          </tbody>
+          </tfoot>
           <tbody>
             @if(!empty($customers))
               @foreach($customers as $customer)

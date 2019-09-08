@@ -29,7 +29,7 @@ class SalesOrderItemDetail extends Model
 
     //
     /**
-	 * Returns Items with Item Name for a particular Order identified by the parameter order_id
+	 * Returns Items with Item Name for a particular Order identified by the parameter $order_id
 	 * 
 	 * @param  int  $order_id
      * @return array

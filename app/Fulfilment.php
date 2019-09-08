@@ -118,7 +118,7 @@ class Fulfilment extends Model
                 continue;
     		$so_item 					= SalesOrderItemDetail::find($item['so_item_id']);
     		$item['item_id'] 			= $so_item->item_id;
-    		// $item['balance_qty'] 		= $so_item->balance_qty;
+    		$item['balance_qty'] 		= $so_item->balance_qty;
     		$item['remaining_qty'] 		= $so_item->balance_qty - $item['fulfilment_qty'];
     		$item['remaining_stock'] 	= $so_item->Item->qty_on_hand;
     		$item['fulfilment_id'] 		= $this->id;
