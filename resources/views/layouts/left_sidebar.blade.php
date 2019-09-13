@@ -37,6 +37,13 @@
         <a id="menu_new_item" class="collapse-item" href="{{ route('new_item') }}">New Item</a>
         <a id="menu_view_items" class="collapse-item" href="{{ route('view_items') }}">View Items</a>
       </div>
+      <div class="bg-white py-2 collapse-inner rounded">
+        <h6 class="collapse-header">Item Types:</h6>
+        <a id="menu_view_item_types" 
+            class="collapse-item" 
+            href="{{ route('view_item_types') }}">
+          View Types</a>
+      </div>
     </div>
   </li>
 
