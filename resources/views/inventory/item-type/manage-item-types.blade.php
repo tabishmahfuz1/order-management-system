@@ -5,11 +5,30 @@
 @section('card-content')
 @verbatim
 <div id="itemListComponent">
-	<ul>
-		<li v-for="itemType in itemTypes" v-bind:typeId="itemType.id">
-			{{ itemType.name }}
-		</li>
-	</ul>
+	<table class="table table-striped table-bordered table-sm">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Type Name</th>
+				<th>Status</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr v-for="(itemType, i) in itemTypes" 
+				v-bind:typeId="itemType.id">
+				<td class="text-center">{{ i+1 }}</td>
+				<td>{{ itemType.name }}</td>
+				<td>{{ itemType.status? "Active" : "Disabled" }}</td>
+				<td class="text-center">
+					<button class="btn btn-sm btn-primary"
+							v-on:click="editItemType">
+						<i class="fa fa-edit"></i>
+					</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 </div>
 @endverbatim
 @endsection
@@ -22,6 +41,11 @@
 	  el: '#itemListComponent',
 	  data: {
 	    itemTypes: {!! $itemTypes->toJson() !!}
+	  },
+	  methods: {
+	  	editItemType: function(e){
+	  		console.log(e, this)
+	  	}
 	  }
 	})
 </script>
