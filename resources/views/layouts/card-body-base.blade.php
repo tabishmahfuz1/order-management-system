@@ -14,6 +14,5 @@
 	</div>
 
 </div>
-@yield('scripts')
 @endsection
 
