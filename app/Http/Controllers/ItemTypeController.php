@@ -19,4 +19,9 @@ class ItemTypeController extends Controller
 		$itemTypes = ItemType::all();
     	return view('inventory.item-type.manage-item-types', compact('itemTypes'));
     }
+
+    public function saveItemType(Request $req)
+    {
+    	dd($req->all());
+    }
 }

@@ -4,8 +4,8 @@
 
 @section('card-content')
 @verbatim
-<div id="itemListComponent">
-	<div class="form-group input-group col-md-4 mx-auto" ref="newTypeGroup">
+<div id="itemListComponent" class="col-md-6 mx-auto">
+	<div class="form-group input-group x-auto" ref="newTypeGroup">
 		<input v-model="newTypeName"
 				placeholder="New Type" 
 				class="form-control-sm form-control input-group-append" />
@@ -26,12 +26,32 @@
 			<tr v-for="(itemType, i) in itemTypes" 
 				v-bind:typeId="itemType.id">
 				<td class="text-center">{{ i+1 }}</td>
-				<td>{{ itemType.name }}</td>
-				<td>{{ itemType.status? "Active" : "Disabled" }}</td>
+				<td>
+					<input v-if="itemType.editing" 
+							class="form-control-sm form-control"
+							v-model="itemType.name" />
+					<span v-else>{{ itemType.name }}</span> 
+				</td>
+				<td class="text-center">
+					<div v-if="itemType.editing">
+						<button class="btn btn-sm"
+								v-bind:class="{ 'btn-success': itemType.status, 'btn-danger': !itemType.status }"
+								v-on:click="itemType.status = !(itemType.status)">
+							{{ itemType.status? "Active" : "Disabled" }}
+						</button>
+					</div>
+					<span v-else>{{ itemType.status? "Active" : "Disabled" }}</span>
+				</td>
 				<td class="text-center">
 					<button type="button" class="btn btn-sm btn-primary"
-							v-on:click="editItemType(itemType, i)">
+							v-on:click="editItemType(itemType, i)"
+							v-if="!itemType.editing">
 						<i class="fa fa-edit"></i>
+					</button>
+					<button type="button" class="btn btn-sm btn-primary"
+							v-on:click="addItemType(itemType, i)"
+							v-if="itemType.editing">
+						Save
 					</button>
 				</td>
 			</tr>
@@ -48,8 +68,10 @@
 
 @section('scripts')
 @include('plugins.vue')
-<script type="text/javascript">
+<script>
 	var menu_id = 'view_item_types';
+	var baseUrl = '{{ url('/') }}';
+	var _token 	= '{{ Session::token() }}';
 	var app = new Vue({
 	  el: '#itemListComponent',
 	  data: {
@@ -64,27 +86,38 @@
 	  	editItemType: function(thisItemType, index){
 	  		thisItemType.editing = true;
 	  		console.log(thisItemType);
-	  		this.editType = {
+	  		this.newTypeName = thisItemType.name;
+	  		this.newTypeName = '';
+	  		/*this.editType = {
 	  			originalTypeObject: thisItemType,
 	  			index
-	  		};
-	  		this.newTypeName = thisItemType.name;
-	  		this.goto('newTypeGroup');
+	  		};*/
+	  		// this.goto('newTypeGroup');
 	  	},
-	  	addItemType: function () {
-	  		if(!this.newTypeName) return false;
-
-	  		if(this.editType) {
-	  			this.editType.originalTypeObject.editing = false;
+	  	addItemType: async function (itemType, index) {
+	  		if(itemType) {
+	  			itemType.editing = false;
+	  			let res = await axios
+	  					.post('{{ route("saveItemType") }}', {
+								_token,
+								itemType
+	  						});
 	  			Vue.set(
 	  				this.itemTypes, 
-	  				this.editType.index, 
-	  				Object.assign(this.editType.originalTypeObject, 
+	  				index, 
+	  				Object.assign(itemType, 
 	  					{name: this.newTypeName})
 	  				);
-	  			this.editType = null;
 	  		} else {
+	  			if(!this.newTypeName) return false;
 	  			console.log("To Add", this.newTypeName);
+	  			let res = await axios
+	  					.post('{{ route("saveItemType") }}', {
+								_token,
+								itemType: {
+									name: this.newTypeName 
+								}
+	  						});
 		  		this.itemTypes.push({name: this.newTypeName, status: true});
 	  		}
 

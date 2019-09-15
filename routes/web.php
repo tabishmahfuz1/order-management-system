@@ -35,6 +35,7 @@ Route::prefix('item')->group(function () {
 
 	Route::group(['prefix' => 'type'], function(){
 		Route::get('/', 'ItemTypeController@listTypes')->name('view_item_types');
+		Route::post('/save', 'ItemTypeController@saveItemType')->name('saveItemType');
 	});
 });
 
