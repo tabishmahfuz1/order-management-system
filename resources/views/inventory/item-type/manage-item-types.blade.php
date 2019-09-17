@@ -2,6 +2,11 @@
 
 @section('card-heading') Item Types @endsection
 
+@section('content')
+    <item-type-list></item-type-list>
+@endsection
+
+{{--
 @section('card-content')
 @verbatim
 <div id="itemListComponent" class="col-md-6 mx-auto">
@@ -134,4 +139,4 @@
 	
 </script>
 @endsection
-
+--}}
