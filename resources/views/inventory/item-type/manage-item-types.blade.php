@@ -3,7 +3,7 @@
 @section('card-heading') Item Types @endsection
 
 @section('card-content')
-    <item-type-list item-types="{!! $itemTypes->toJson() !!}"></item-type-list>
+    <item-type-list></item-type-list>
 @endsection
 
 @section('scripts')

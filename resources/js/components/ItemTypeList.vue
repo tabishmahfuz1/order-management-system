@@ -65,14 +65,16 @@
         name: "item-type-list",
         data: function(){
             return {
-                // itemTypes: [],
+                itemTypes: [],
                 newTypeName: 'ABC',
                 editType: null
             };
         },
-        props: ['itemType'],
-        mounted() {
-            console.log('Component mounted.')
+        // props: ['itemType'],
+        async mounted() {
+            console.log('Component mounted.');
+            console.log('axios', axios)
+            let itemTypes = await axios.get("{{ route('itemType') }}")
         },
         methods: {
             editItemType: function(thisItemType, index){

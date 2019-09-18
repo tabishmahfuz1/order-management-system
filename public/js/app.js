@@ -1821,8 +1821,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       editType: null
     };
   },
+  // props: ['itemType'],
   mounted: function mounted() {
-    console.log('Component mounted.');
+    console.log('Component mounted.', axios);
   },
   methods: {
     editItemType: function editItemType(thisItemType, index) {
