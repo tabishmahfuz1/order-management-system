@@ -65,11 +65,12 @@
         name: "item-type-list",
         data: function(){
             return {
-                itemTypes: [],
+                // itemTypes: [],
                 newTypeName: 'ABC',
                 editType: null
             };
         },
+        props: ['itemType'],
         mounted() {
             console.log('Component mounted.')
         },
