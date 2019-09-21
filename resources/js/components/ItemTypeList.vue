@@ -72,9 +72,12 @@
         },
         // props: ['itemType'],
         async mounted() {
-            console.log('Component mounted.');
+            console.log('Component mounted.', `${axios.baseUrl}/itemTypes`);
             console.log('axios', axios)
-            let itemTypes = await axios.get("{{ route('itemType') }}")
+            let res = await axios.get(`/api/itemType`);
+            this.itemTypes = res.data;
+
+            console.log({itemTypes: this.itemTypes})
         },
         methods: {
             editItemType: function(thisItemType, index){
@@ -92,7 +95,7 @@
                 if(itemType) {
                     itemType.editing = false;
                     let res = await axios
-                            .post('{{ route("saveItemType") }}', {
+                            .post('/api/itemType', {
                                     _token,
                                     itemType
                                 });
@@ -106,7 +109,7 @@
                     if(!this.newTypeName) return false;
                     console.log("To Add", this.newTypeName);
                     let res = await axios
-                            .post('{{ route("saveItemType") }}', {
+                            .post('/api/itemType', {
                                     _token,
                                     itemType: {
                                         name: this.newTypeName 

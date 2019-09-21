@@ -1816,15 +1816,39 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   name: "item-type-list",
   data: function data() {
     return {
-      itemTypes: [],
+      itemTypes: [this.itemTypesList],
       newTypeName: 'ABC',
       editType: null
     };
   },
-  // props: ['itemType'],
-  mounted: function mounted() {
-    console.log('Component mounted.', axios);
-  },
+  props: ['itemTypesList'],
+  mounted: function () {
+    var _mounted = _asyncToGenerator(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              console.log('Component mounted.', "".concat(axios.baseUrl, "/itemTypes"));
+              console.log('axios', axios); // let res = await axios.get(`/api/itemType`);
+              // this.itemTypes = res.data;
+              // console.log({itemTypes: this.itemTypes})
+
+            case 2:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    function mounted() {
+      return _mounted.apply(this, arguments);
+    }
+
+    return mounted;
+  }(),
   methods: {
     editItemType: function editItemType(thisItemType, index) {
       thisItemType.editing = true;
@@ -1840,44 +1864,44 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     addItemType: function () {
       var _addItemType = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(itemType, index) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(itemType, index) {
         var res, _res;
 
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
                 if (!itemType) {
-                  _context.next = 8;
+                  _context2.next = 8;
                   break;
                 }
 
                 itemType.editing = false;
-                _context.next = 4;
+                _context2.next = 4;
                 return axios.post('{{ route("saveItemType") }}', {
                   _token: _token,
                   itemType: itemType
                 });
 
               case 4:
-                res = _context.sent;
+                res = _context2.sent;
                 Vue.set(this.itemTypes, index, Object.assign(itemType, {
                   name: this.newTypeName
                 }));
-                _context.next = 15;
+                _context2.next = 15;
                 break;
 
               case 8:
                 if (this.newTypeName) {
-                  _context.next = 10;
+                  _context2.next = 10;
                   break;
                 }
 
-                return _context.abrupt("return", false);
+                return _context2.abrupt("return", false);
 
               case 10:
                 console.log("To Add", this.newTypeName);
-                _context.next = 13;
+                _context2.next = 13;
                 return axios.post('{{ route("saveItemType") }}', {
                   _token: _token,
                   itemType: {
@@ -1886,7 +1910,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
 
               case 13:
-                _res = _context.sent;
+                _res = _context2.sent;
                 this.itemTypes.push({
                   name: this.newTypeName,
                   status: true
@@ -1897,10 +1921,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 16:
               case "end":
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee, this);
+        }, _callee2, this);
       }));
 
       function addItemType(_x, _x2) {
