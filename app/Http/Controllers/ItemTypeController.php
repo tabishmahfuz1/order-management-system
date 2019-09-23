@@ -35,7 +35,7 @@ class ItemTypeController extends Controller
         $itemType->status = $req->has('itemType.status')? $req->itemType['status'] 
                             : true;
         $itemType->save();
-        return response()->json(array('success' => true));
+        return response()->json($itemType);
     }
 
     public function listTypes(Request $req)

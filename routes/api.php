@@ -18,8 +18,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::middleware('auth:api')->group(function(){
-	Route::get('/itemType', 'ItemTypeController@itemTypes');
-	Route::get('/itemType/{itemtype}', 'ItemTypeController@getItemType');
-	Route::post('/itemType', 'ItemTypeController@saveItemType');
+	Route::group(['prefix' => 'item'], function(){
+		Route::group(['prefix' => 'type'], function(){
+			Route::get('/', 'ItemTypeController@itemTypes');
+			Route::get('/{itemtype}', 'ItemTypeController@getItemType');
+			Route::post('/', 'ItemTypeController@saveItemType');
+		});
+	});
 });
 

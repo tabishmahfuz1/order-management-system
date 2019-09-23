@@ -1818,7 +1818,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     return {
       itemTypes: [],
       newTypeName: '',
-      baseUrl: '/api/itemType'
+      baseUrl: '/api/item/type'
     };
   },
   // props: ['itemType'],
@@ -1920,10 +1920,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 20:
                 _res = _context2.sent;
-                this.itemTypes.push({
-                  name: this.newTypeName,
-                  status: true
-                });
+                this.itemTypes.push(_res.data);
                 this.newTypeName = "";
                 _context2.next = 28;
                 break;
@@ -50660,8 +50657,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /mnt/c/xampp/htdocs/mini_erp/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /mnt/c/xampp/htdocs/mini_erp/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! f:\xampp\htdocs\mini_erp\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! f:\xampp\htdocs\mini_erp\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

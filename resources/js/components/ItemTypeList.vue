@@ -67,7 +67,7 @@
             return {
                 itemTypes: [],
                 newTypeName: '',
-                baseUrl: '/api/itemType'
+                baseUrl: '/api/item/type'
             };
         },
         // props: ['itemType'],
@@ -113,10 +113,7 @@
                                     }
                                 });
 
-                        this.itemTypes.push({
-                            name: this.newTypeName, 
-                            status: true
-                        });
+                        this.itemTypes.push(res.data);
                         this.newTypeName = "";
                     } catch(err) {
                         console.error("Couldn't add Item Type", err);
