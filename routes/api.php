@@ -17,6 +17,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/itemType', 'ItemTypeController@itemTypes');
-Route::get('/itemType/{itemtype}', 'ItemTypeController@getItemType');
-Route::post('/itemType', 'ItemTypeController@saveItemType');
+Route::middleware('auth:api')->group(function(){
+	Route::get('/itemType', 'ItemTypeController@itemTypes');
+	Route::get('/itemType/{itemtype}', 'ItemTypeController@getItemType');
+	Route::post('/itemType', 'ItemTypeController@saveItemType');
+});
+

@@ -28,11 +28,11 @@ class ItemTypeController extends Controller
 
     public function saveItemType(Request $req)
     {
-        $itemType = $req->has('itemType.id')? ItemType::find($req->itemType->id)
+        $itemType = $req->has('itemType.id')? ItemType::find($req->itemType['id'])
                     : new ItemType();
 
-        $itemType->name = $req->itemType->name;
-        $itemType->status = $req->has('itemType.status')? $req->itemType->status 
+        $itemType->name = $req->itemType['name'];
+        $itemType->status = $req->has('itemType.status')? $req->itemType['status'] 
                             : true;
         $itemType->save();
         return response()->json(array('success' => true));
@@ -44,8 +44,8 @@ class ItemTypeController extends Controller
     	return view('inventory.item-type.manage-item-types', compact('itemTypes'));
     }
 
-    public function saveItemType(Request $req)
+    /*public function saveItemType(Request $req)
     {
     	dd($req->all());
-    }
+    }*/
 }

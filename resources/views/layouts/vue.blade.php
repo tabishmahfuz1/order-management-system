@@ -51,8 +51,10 @@
 	             ].join('-');
 	    };
 	    window.Laravel = {!! json_encode([
-	        'csrfToken' => csrf_token()
+	        'csrfToken' => csrf_token(),
+            'baseAPIUrl' => url('api')
 	    ]) !!};
+        window.baseAPIUrl = '{{ url("api") }}';
 	</script>
     </body>
 </html>

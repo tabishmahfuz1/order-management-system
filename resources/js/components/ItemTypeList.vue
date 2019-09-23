@@ -4,7 +4,7 @@
             <input v-model="newTypeName"
                     placeholder="New Type" 
                     class="form-control-sm form-control input-group-append" />
-            <button class="btn btn-sm btn-success input-group-append" v-on:click="addItemType">
+            <button class="btn btn-sm btn-success input-group-append" v-on:click="addItemType()">
                 <i class="fa fa-plus fa-sm"></i>
             </button>
         </div>
@@ -66,15 +66,15 @@
         data: function(){
             return {
                 itemTypes: [],
-                newTypeName: 'ABC',
-                editType: null
+                newTypeName: '',
+                baseUrl: '/api/itemType'
             };
         },
         // props: ['itemType'],
         async mounted() {
-            console.log('Component mounted.', `${axios.baseUrl}/itemTypes`);
+            console.log('Component mounted.', this);
             console.log('axios', axios)
-            let res = await axios.get(`/api/itemType`);
+            let res = await axios.get(this.baseUrl);
             this.itemTypes = res.data;
 
             console.log({itemTypes: this.itemTypes})
@@ -82,43 +82,47 @@
         methods: {
             editItemType: function(thisItemType, index){
                 thisItemType.editing = true;
-                console.log(thisItemType);
                 this.newTypeName = thisItemType.name;
                 this.newTypeName = '';
-                /*this.editType = {
-                    originalTypeObject: thisItemType,
-                    index
-                };*/
-                // this.goto('newTypeGroup');
             },
             addItemType: async function (itemType, index) {
+                // console.log(itemType);return;
                 if(itemType) {
                     itemType.editing = false;
-                    let res = await axios
-                            .post('/api/itemType', {
-                                    _token,
+                    try {
+                        let res = await axios
+                            .post(`${this.baseUrl}`, {
                                     itemType
                                 });
-                    Vue.set(
-                        this.itemTypes, 
-                        index, 
-                        Object.assign(itemType, 
-                            {name: this.newTypeName})
+                        Vue.set(
+                            this.itemTypes, 
+                            index, 
+                            itemType
                         );
+                    } catch(err) {
+                        console.error("Couldn't save Item Type", err);
+                    } 
                 } else {
                     if(!this.newTypeName) return false;
                     console.log("To Add", this.newTypeName);
-                    let res = await axios
-                            .post('/api/itemType', {
-                                    _token,
+                    try {
+                        let res = await axios
+                            .post(this.baseUrl, {
                                     itemType: {
                                         name: this.newTypeName 
                                     }
                                 });
-                    this.itemTypes.push({name: this.newTypeName, status: true});
-                }
 
-                this.newTypeName = "";
+                        this.itemTypes.push({
+                            name: this.newTypeName, 
+                            status: true
+                        });
+                        this.newTypeName = "";
+                    } catch(err) {
+                        console.error("Couldn't add Item Type", err);
+                    }
+                    
+                }
             },
             goto(refName) {
                 var element = this.$refs[refName];
