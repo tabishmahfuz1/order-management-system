@@ -91,7 +91,7 @@
                     itemType.editing = false;
                     try {
                         let res = await axios
-                            .post(`${this.baseUrl}`, {
+                            .post(`${this.baseUrl}/${itemType.id}`, {
                                     itemType
                                 });
                         Vue.set(

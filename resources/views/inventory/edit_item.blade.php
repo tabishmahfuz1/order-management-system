@@ -1,4 +1,18 @@
-@extends('layouts.app')
+@extends('layouts.card-body-base')
+
+@section('card-heading') Edit Item @endsection
+
+@section('card-content')
+    <item-detail item-id="{{ $item->id }}"></item-detail>
+@endsection
+
+@section('scripts')
+<script type="text/javascript">
+  var menu_id = 'view_items';
+</script>
+@endsection
+{{--
+  @extends('layouts.app')
 @section('content')
 @include('plugins.datepicker')
 <!-- Begin Page Content -->
@@ -275,3 +289,4 @@
 </script>
 <!-- /.container-fluid -->
 @endsection
+--}}
