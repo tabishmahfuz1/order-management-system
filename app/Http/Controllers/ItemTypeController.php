@@ -26,16 +26,16 @@ class ItemTypeController extends Controller
         dd($itemtype);
     }
 
-    public function saveItemType(Request $req)
+    public function saveItemType(ItemType $itemtype, Request $req)
     {
-        $itemType = $req->has('itemType.id')? ItemType::find($req->itemType['id'])
-                    : new ItemType();
+        // $itemType = $req->has('itemType.id')? ItemType::find($req->itemType['id'])
+        //            : new ItemType();
 
-        $itemType->name = $req->itemType['name'];
-        $itemType->status = $req->has('itemType.status')? $req->itemType['status'] 
+        $itemtype->name = $req->itemType['name'];
+        $itemtype->status = $req->has('itemType.status')? $req->itemType['status'] 
                             : true;
-        $itemType->save();
-        return response()->json($itemType);
+        $itemtype->save();
+        return response()->json($itemtype);
     }
 
     public function listTypes(Request $req)
