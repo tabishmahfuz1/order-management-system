@@ -111,6 +111,7 @@
 			return {
 				id: this.itemId,
 				item: {
+					id: null,
 					name: '',
 					status: 0,
 					qty_on_hand: 0,
@@ -118,6 +119,7 @@
 					item_price: 0,
 
 				},
+				exists: false,
 				baseUrl: '/api/item'
 			}
 		},
@@ -125,13 +127,22 @@
 		async mounted() {
             console.log('Component mounted.', this);
             console.log('axios', axios);
-            let res = await axios.get(`${this.baseUrl}/${this.id}`);
-            this.item = res.data;
+            if(this.itemId) {
+            	let res = await axios.get(`${this.baseUrl}/${this.itemId}`);
+            	this.item = res.data;
+            	this.exists = true;
+            }
+            
 
             // console.log({item: this.item});
         },
         methods: {
-        	
+        	saveItem: async function(){
+        		if(this.exists) {
+        			let res = await axois.post(`${this.baseUrl}/${this.item.id}`);
+        			this.item = res.data;
+        		}
+        	}
         }
 	}
 </script>

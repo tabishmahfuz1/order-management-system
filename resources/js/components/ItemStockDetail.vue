@@ -22,11 +22,11 @@
 				</select>
 			</td>
 			<td>
-				<input type="text"
-				name="entry_date"
-				id="entry_date"
-				v-model="newStockDetail.date"
-				class="form-control form-control-sm datepicker" />
+				<datepicker v-model="newStockDetail.date" 
+							name="entry_date"
+							class="form-control form-control-sm datepicker"
+							>
+				</datepicker>
 			</td>
 			<td>
 				<input type="number"
@@ -71,8 +71,12 @@
 </table>
 </template>
 <script>
+	import Datepicker from 'vuejs-datepicker';
 	export default {
 		name: 'item-stock-detail',
+		components: {
+		    Datepicker
+		},
 		data: function(){
 			return {
 				newStockDetail: {
