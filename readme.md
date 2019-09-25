@@ -21,3 +21,6 @@ A light weight Order Management System for Small business owners with the Follow
     <li>Invoicing</li>
     <li>Payments</li>
 </ul>
+
+## Reports
+ To be added.
