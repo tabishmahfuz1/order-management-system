@@ -7,6 +7,7 @@ A light weight Order Management System for Small business owners with the Follow
     <li>Item Master </li>
     <li>Item Types </li>
 </ul>
+
 ## Customer Master
 
 ## Orders
@@ -14,6 +15,7 @@ A light weight Order Management System for Small business owners with the Follow
     <li>Sales Orders</li>
     <li>Fulfilments</li>
 </ul>
+
 ## Financials
 <ul>
     <li>Invoicing</li>
