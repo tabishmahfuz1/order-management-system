@@ -7,24 +7,10 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
+use App\Traits\DecodesConversionOperators;
+
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests, DecodesConversionOperators;
 
-    public static function decodeSqlConversionOperator($operatorCode) {
-    	switch ($operatorCode) {
-    		case 'lt':
-    			return '<';
-    		case 'le':
-    			return '<=';
-    		case 'ge':
-    			return '>=';
-    		case 'gt':
-    			return '>';
-    		case 'eq':
-    			return '=';
-    		default:
-    			return false;
-    	}
-    }
 }

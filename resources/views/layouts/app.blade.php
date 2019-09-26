@@ -71,5 +71,8 @@
               (dd>9 ? '' : '0') + dd
              ].join('-');
     };
+    window.Laravel = {!! json_encode([
+        'csrfToken' => csrf_token()
+    ]) !!};
 </script>
 </html>
