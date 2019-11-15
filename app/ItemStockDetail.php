@@ -17,9 +17,11 @@ class ItemStockDetail extends Model
     	return $this->belongsTo(Item::class, 'item_id');
     }
 
-    public static function saveItemStock($item_stock_detail) {
-        $itemStockDetail = null;
+    public static function saveItemStock($item_stock_detail, $itemStockDetail = null) {
         DB::transaction(function() use(&$itemStockDetail, $item_stock_detail){
+            if($itemStockDetail instanceof ItemStockDetail){
+                // Should already be implicitly bounded by Laravel in Controller
+            }
             if(!empty($item_stock_detail['item_stock_detail_id'])) {
                 $itemStockDetail = self::find($item_stock_detail['item_stock_detail_id']);
                 $itemStockDetail->Item->decreaseQuantityOnHand($itemStockDetail->quantity);

@@ -89,13 +89,15 @@
 					</div>
 					
 					<div class="text-center">
-						<button type="submit" class="btn btn-primary">Save</button>
+						<button class="btn btn-primary" v-on:click="saveItem">Save</button>
 					</div>
 				</div>
 				<div id="stock_details"
 					class="tab-pane"
 					role="tabpanel">
-					<item-stock-detail :itemId="this.item.id"></item-stock-detail>
+					<item-stock-detail v-if="this.exists" :item-id="this.item.id" v-on:item-update="setItem">
+						
+					</item-stock-detail>
 				</div>
 				<div id="movement_details" class="tab-pane" role="tabpanel">
 					
@@ -128,20 +130,24 @@
             console.log('Component mounted.', this);
             console.log('axios', axios);
             if(this.itemId) {
-            	let res = await axios.get(`${this.baseUrl}/${this.itemId}`);
-            	this.item = res.data;
-            	this.exists = true;
+            	await this.fetchItem();
             }
-            
-
             // console.log({item: this.item});
         },
         methods: {
         	saveItem: async function(){
         		if(this.exists) {
-        			let res = await axois.post(`${this.baseUrl}/${this.item.id}`);
+        			let res = await axios.post(`${this.baseUrl}/${this.item.id}`, this.item);
         			this.item = res.data;
         		}
+        	}, 
+        	fetchItem: async function(){
+        		let res = await axios.get(`${this.baseUrl}/${this.itemId}`);
+            	this.setItem(res.data);
+            	this.exists = true;
+        	}, 
+        	setItem: function(item){
+        		this.item = item;
         	}
         }
 	}

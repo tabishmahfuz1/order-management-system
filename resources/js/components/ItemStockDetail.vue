@@ -15,6 +15,7 @@
 				<select class="select form-control-sm form-control"
 					name="stock_entry_type"
 					id="stock_entry_type"
+					v-model="newStockDetail.type"
 					required>
 					<option value="">Select a type</option>
 					<option :value="RECEIVING">Receiving</option>
@@ -32,7 +33,7 @@
 				<input type="number"
 				name="entry_quantity"
 				id="entry_quantity"
-				v-model="newStockDetail.type"
+				v-model="newStockDetail.quantity"
 				class="form-control form-control-sm" />
 			</td>
 			<td>
@@ -62,8 +63,14 @@
 		    <input type="hidden" name="item_stock_detail_id" :value="stockDetail.id" />
 		    <button class="btn btn-sm btn-primary" 
 		            type="button"
-		            v-on:click="EditStockDetail(stockDetail)">
-		      <i class="fa fa-edit fa-sm"></i>
+		            v-on:click="stockDetail.editing = true">
+		      	<i class="fa fa-edit fa-sm"></i>
+		    </button>
+		    <button class="btn btn-sm btn-success" 
+		            type="button"
+		            v-if="stockDetail.editing"
+		            v-on:click="AddStockDetail(stockDetail, i)">
+		      	Save
 		    </button>
 		  </td>
 		</tr>
@@ -80,42 +87,66 @@
 		data: function(){
 			return {
 				newStockDetail: {
-					type,
-			        date,
-			        quantity,
-			        remarks,
+					type: "",
+			        date: new Date(),
+			        quantity: null,
+			        remarks: null,
 			        item_id: this.itemId,
-				}
-				stockDetails: null,
+				},
+				stockDetails: [],
 				RECEIVING: 'RECEIVING',
 				ADJUSTMENT: 'ADJUSTMENT',
-				baseUrl: '/api/item/stock'
+				baseUrl: `/api/item/${this.itemId}/stock`
 			}	
 		},
 		props: ['itemId'],
 
 		async mounted(){
-
+			this.fetchStockDetails();
 		},
-		methods: {
-			AddStockDetail: async function (stockDetail) {
-
+		methods: { 
+        	fetchStockDetails: async function(){
+        		let res = await axios.get(`${this.baseUrl}`);
+            	this.stockDetails = res.data;
+        	},
+        	initializeNewItemInputs: function(){
+        		this.newStockDetail = {
+					type: "",
+			        date: new Date(),
+			        quantity: null,
+			        remarks: null,
+			        item_id: this.itemId,
+				};
+        	},
+			AddStockDetail: async function (stockDetail, i) {
+				let exists = stockDetail;
 				stockDetail = stockDetail || this.newStockDetail;
-			        if(!stockDetail.type || !stockDetail.date || !stockDetail.quantity) {
-			          showDangerMsg("One or more of the required fields are mmissing");
-			          return false;
-			        } 
+		        if(!stockDetail.type || !stockDetail.date || !stockDetail.quantity) {
+		          showDangerMsg("One or more of the required fields are mmissing");
+		          return false;
+		        } 
 
-			        stockDetail.date = stockDetail.date.toISOString();
+		        stockDetail.date = stockDetail.date.toDatabaseFormat();
 
-			        try{
-			          stockDetail = await axios.post(`${this.baseUrl}`, data);
-			          Item.qty_on_hand += stockDetail.quantity;
-			          $('input[name=qty_on_hand]').val(Item.qty_on_hand);
-			          $('#stock_details_body').append(createItemStockDetailRow(stockDetail));
-			        } catch(err) {
-			          console.error("Error while adding new Stock detail", err);
-			        }
+		        try{
+		          	let res = await axios.post(`${this.baseUrl}`, stockDetail);
+		          	stockDetail = res.data;
+		          	if(exists) {
+		          		stockDetail.editing = false;
+		          		Vue.set(
+		                    this.stockDetails, 
+		                    i, 
+		                    stockDetail
+		                );
+		          	} else {
+		          		this.stockDetails.push(stockDetail);
+		          		this.initializeNewItemInputs();
+		          	}
+
+		          	this.$emit('item-update', stockDetail.item);
+		        } catch(err) {
+		          console.error("Error while adding new Stock detail", err);
+		        }
 			  }
 		}
 	}

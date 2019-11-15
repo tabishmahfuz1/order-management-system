@@ -40,21 +40,5 @@
         </div>
 	</div>
     <script src="{{ asset('/js/app.js') }}"></script>
-    <script type="text/javascript">
-	    Date.prototype.toDatabaseFormat = function() {
-	      var mm = this.getMonth() + 1; // getMonth() is zero-based
-	      var dd = this.getDate();
-
-	      return [this.getFullYear(),
-	              (mm>9 ? '' : '0') + mm,
-	              (dd>9 ? '' : '0') + dd
-	             ].join('-');
-	    };
-	    window.Laravel = {!! json_encode([
-	        'csrfToken' => csrf_token(),
-            'baseAPIUrl' => url('api')
-	    ]) !!};
-        window.baseAPIUrl = '{{ url("api") }}';
-	</script>
     </body>
 </html>

@@ -18,14 +18,17 @@ class ItemController extends Controller
     	return view('inventory.new_item');
     }
 
-    public function saveItem(Request $req) {
-    	if(isset($req->item_id)){
+    public function saveItem(Item $item, Request $req) {
+    	if($item){
+            // Already have the Item from Implicit Binding
+        }
+        else if(isset($req->item_id)){
     		$item = Item::find($req->item_id);
         }
     	else{
     		$item = new Item();
         }
-
+        // dd($req->all());
     	$item->item_name   = $req->item_name;
     	$item->item_cost   = $req->item_cost;
         $item->item_price  = $req->item_price;
@@ -45,6 +48,10 @@ class ItemController extends Controller
                 'remarks' => 'Opening Stock',
                 'item_id' => $item->id
             ]);
+        }
+
+        if($req->expectsJson()) {
+            return response()->json($item);
         }
 
     	return redirect()->route('edit_item', $item->id)->with(['success' => 'Information Saved']);
@@ -98,6 +105,11 @@ class ItemController extends Controller
         return $itemStockDetail;
     }
 
+    public function saveItemStockDetail($itemId, ItemStockDetail $itemstockdetail, Request $req)
+    {
+       return $itemStockDetail = ItemStockDetail::saveItemStock($req->all(), $itemstockdetail);
+    }
+
     /**
     * Get Item by item_id
     *
@@ -106,5 +118,13 @@ class ItemController extends Controller
     */
     public function getItem($item_id) {
         return Item::find($item_id);
+    }
+
+    public function getItemStockDetails(Item $item)
+    {
+        if(!($item->exists ?? false)) {
+            return response()->json("Item Not found", 404);
+        }
+        return response()->json($item->StockDetails);
     }
 }

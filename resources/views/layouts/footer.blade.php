@@ -12,6 +12,27 @@
     </div>
   </div>
 </footer>
+<style type="text/css">
+    /* width */
+    ::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1; 
+    }
+     
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: #888; 
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555; 
+    }
+</style>
 <!-- End of Footer -->
 <script type="text/javascript">
 	$(function () {
@@ -28,4 +49,16 @@
     	$alert.find('span.msg_text').html(msg);
     	$alert.show({animation:'slide', direction: 'left'});
     }
+    Date.prototype.toDatabaseFormat = function() {
+      var mm = this.getMonth() + 1; // getMonth() is zero-based
+      var dd = this.getDate();
+
+      return [this.getFullYear(),
+              (mm>9 ? '' : '0') + mm,
+              (dd>9 ? '' : '0') + dd
+             ].join('-');
+    };
+    window.Laravel = {!! json_encode([
+        'csrfToken' => csrf_token()
+    ]) !!};
 </script>
